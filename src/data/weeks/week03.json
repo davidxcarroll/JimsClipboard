@@ -1,0 +1,87 @@
+{
+  "week": 3,
+  "matchups": [
+    {
+      "date": "2024-09-19",
+      "day": "Thursday",
+      "games": [
+        {
+          "homeTeam": "Chiefs",
+          "awayTeam": "Chargers"
+        }
+      ]
+    },
+    {
+      "date": "2024-09-22",
+      "day": "Sunday",
+      "games": [
+        {
+          "homeTeam": "Bears",
+          "awayTeam": "Vikings"
+        },
+        {
+          "homeTeam": "49ers",
+          "awayTeam": "Rams"
+        },
+        {
+          "homeTeam": "Colts",
+          "awayTeam": "Ravens"
+        },
+        {
+          "homeTeam": "Jets",
+          "awayTeam": "Bills"
+        },
+        {
+          "homeTeam": "Jaguars",
+          "awayTeam": "Titans"
+        },
+        {
+          "homeTeam": "Falcons",
+          "awayTeam": "Saints"
+        },
+        {
+          "homeTeam": "Lions",
+          "awayTeam": "Packers"
+        },
+        {
+          "homeTeam": "Broncos",
+          "awayTeam": "Cardinals"
+        },
+        {
+          "homeTeam": "Giants",
+          "awayTeam": "Commanders"
+        },
+        {
+          "homeTeam": "Eagles",
+          "awayTeam": "Cowboys"
+        },
+        {
+          "homeTeam": "Seahawks",
+          "awayTeam": "Panthers"
+        },
+        {
+          "homeTeam": "Browns",
+          "awayTeam": "Bengals"
+        },
+        {
+          "homeTeam": "Dolphins",
+          "awayTeam": "Patriots"
+        },
+        {
+          "homeTeam": "Saints",
+          "awayTeam": "Buccaneers"
+        }
+      ]
+    },
+    {
+      "date": "2024-09-23",
+      "day": "Monday",
+      "games": [
+        {
+          "homeTeam": "Raiders",
+          "awayTeam": "Steelers"
+        }
+      ]
+    }
+  ]
+}

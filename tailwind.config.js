@@ -6,7 +6,10 @@ export default {
   ],
   theme: {
     extend: {
-      // Your theme extensions if needed
+      fontFamily: {
+        'marker': ['"Permanent Marker"', 'cursive'],
+        'chakra': ['"Chakra Petch"', 'serif'],
+      },
     },
   },
   plugins: [

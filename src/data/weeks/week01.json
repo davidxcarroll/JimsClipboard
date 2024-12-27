@@ -1,0 +1,87 @@
+{
+  "week": 1,
+  "matchups": [
+    {
+      "date": "2024-09-05",
+      "day": "Thursday",
+      "games": [
+        {
+          "homeTeam": "Chiefs",
+          "awayTeam": "Ravens"
+        }
+      ]
+    },
+    {
+      "date": "2024-09-08",
+      "day": "Sunday",
+      "games": [
+        {
+          "homeTeam": "Eagles",
+          "awayTeam": "Packers"
+        },
+        {
+          "homeTeam": "Bills",
+          "awayTeam": "Cardinals"
+        },
+        {
+          "homeTeam": "Bears",
+          "awayTeam": "Titans"
+        },
+        {
+          "homeTeam": "Bengals",
+          "awayTeam": "Patriots"
+        },
+        {
+          "homeTeam": "Colts",
+          "awayTeam": "Texans"
+        },
+        {
+          "homeTeam": "Dolphins",
+          "awayTeam": "Jaguars"
+        },
+        {
+          "homeTeam": "Saints",
+          "awayTeam": "Panthers"
+        },
+        {
+          "homeTeam": "Giants",
+          "awayTeam": "Vikings"
+        },
+        {
+          "homeTeam": "Chargers",
+          "awayTeam": "Raiders"
+        },
+        {
+          "homeTeam": "Seahawks",
+          "awayTeam": "Broncos"
+        },
+        {
+          "homeTeam": "Browns",
+          "awayTeam": "Cowboys"
+        },
+        {
+          "homeTeam": "Buccaneers",
+          "awayTeam": "Commanders"
+        },
+        {
+          "homeTeam": "Lions",
+          "awayTeam": "Rams"
+        },
+        {
+          "homeTeam": "Falcons",
+          "awayTeam": "Steelers"
+        }
+      ]
+    },
+    {
+      "date": "2024-09-09",
+      "day": "Monday",
+      "games": [
+        {
+          "homeTeam": "49ers",
+          "awayTeam": "Jets"
+        }
+      ]
+    }
+  ]
+}
