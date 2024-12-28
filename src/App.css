@@ -3,19 +3,22 @@
 @tailwind utilities;
 
 html, body {
-    background-color: #7E6748;
+    background-color: #000;
 }
 
 /* Fonts */
 
-.permanent-marker-regular {
+.marker {
     font-family: "Permanent Marker", serif;
     font-weight: 400;
     font-style: normal;
 }
 
-.chakra-petch-bold {
-    font-family: "Chakra Petch", serif;
-    font-weight: 700;
+@font-face {
+    font-family: 'Telegraf Black';
+    src: url('src/assets/fonts/PPTelegraf-Black.woff2') format('woff2'),
+         url('src/assets/fonts/PPTelegraf-Black.woff') format('woff');
+    font-weight: 900;
     font-style: normal;
+    font-display: swap;
 }

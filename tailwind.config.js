@@ -7,8 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'marker': ['"Permanent Marker"', 'cursive'],
-        'chakra': ['"Chakra Petch"', 'serif'],
+        telegraf: ['Telegraf Black', 'sans-serif'],
       },
     },
   },
