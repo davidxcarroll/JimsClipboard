@@ -7,45 +7,64 @@ import { CircleCheck03 } from './components/circles/circleCheck03'
 import { CircleTeamSm } from './components/circles/circleTeamSm'
 import { CircleTeamMd } from './components/circles/circleTeamMd'
 import { CircleTeamLg } from './components/circles/circleTeamLg'
-import clipImage from './assets/clip-303.png'
+import clipImage from './assets/clip-305.png'
 
 function App() {
   const currentWeek = getWeekSchedule(1)
   return (
-    <div className="min-h-screen w-full flex flex-col">
+    <div className="min-h-screen w-full flex flex-col max-sm:gap-16">
 
       <div className="
-        absolute z-10 w-full lg:h-32 md:h-28 h-24
-        flex flex-row items-center justify-between p-8
-        font-telegraf lg:text-3xl md:text-2xl text-xl
+        relative z-50
+        w-full sm:h-32 h-fit
+        flex flex-row flex-wrap items-center justify-between
+        font-extrabold lg:text-2xl md:text-xl text-lg text-white
       ">
-        <div className="flex flex-row gap-2 justify-start items-center text-white">
-          <p className="text-center">Jim's Clipboard</p>
-        </div>
-        <div className="flex flex-row gap-2 justify-end items-center text-white">
-          <p className="text-center">&larr;</p>
-          <p className="text-center">Week 5</p>
-          <p className="text-center">&rarr;</p>
-        </div>
-      </div>
+          
+          <div className="h-full flex flex-1 flex-row whitespace-nowrap justify-center items-center p-2 hover:underline cursor-pointer">
+            <p className="text-center">
+              Week 5
+              <span className="material-symbols-sharp align-middle">
+                arrow_drop_down
+              </span>
+            </p>
+          </div>
 
-      <div className="relative z-50 flex items-center justify-center">
-        <img
-          className="lg:w-[500px] md:w-[450px] w-[400px] h-auto"
-          src={clipImage}
-          alt="Clipboard"
-        />
+          <div className="h-full flex flex-1 flex-row whitespace-nowrap justify-center items-center p-2 hover:underline cursor-pointer">
+            <p className="text-center">Your Picks</p>
+          </div>
+
+          <div className="h-full flex flex-1 max-sm:hidden" />
+
+          <div className="h-full flex flex-1 flex-row whitespace-nowrap justify-center items-center p-2 hover:underline cursor-pointer">
+            <p className="text-center">Standings</p>
+          </div>
+
+          <div className="h-full flex flex-1 flex-row whitespace-nowrap justify-center items-center p-2 hover:underline cursor-pointer">
+            <p className="text-center">Settings</p>
+          </div>
+
       </div>
       
       <div className="
         flex flex-col gap-12 px-8 bg-white
-        lg:py-28 md:py-24 py-20
-        lg:-mt-20 md:-mt-16 -mt-14
       ">
 
         <div className="
-          flex flex-row gap-2 h-10 -mb-12 marker sticky top-0 z-50
+          relative z-10 flex items-center justify-center max-md:-mb-8
+          lg:-mt-32 md:-mt-28 -mt-16
+        ">
+          <img
+            className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[400px] h-auto"
+            src={clipImage}
+            alt="Clipboard"
+          />
+        </div>
+
+        <div className="
+          flex flex-row gap-2 h-12 -mb-12 marker sticky top-0 z-50
           lg:text-3xl md:text-2xl text-xl
+          shadow-[0_1px_0_rgba(0,0,0,.1)]
         ">
           <div className="w-1/5 min-w-[120px] flex items-center justify-center"></div>
           <div className="w-1/5 flex items-center justify-center">
@@ -68,8 +87,8 @@ function App() {
 
             {/* Date Header */}
             <div className="
-              flex items-center h-12 font-telegraf bg-white sticky top-0
-              uppercase lg:text-xl md:text-lg text-base
+              flex items-center h-12 font-extrabold bg-white sticky top-0
+              uppercase lg:text-xl md:text-lg text-base text-neutral-400
             ">
               {dateGroup.day.slice(0,3)} {new Date(dateGroup.date).toLocaleDateString('en-US', {
                 month: 'short',

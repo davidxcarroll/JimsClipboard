@@ -7,7 +7,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        telegraf: ['Telegraf Black', 'sans-serif'],
       },
     },
   },

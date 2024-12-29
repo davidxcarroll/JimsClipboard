@@ -13,12 +13,3 @@ html, body {
     font-weight: 400;
     font-style: normal;
 }
-
-@font-face {
-    font-family: 'Telegraf Black';
-    src: url('src/assets/fonts/PPTelegraf-Black.woff2') format('woff2'),
-         url('src/assets/fonts/PPTelegraf-Black.woff') format('woff');
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
-}
