@@ -6,13 +6,13 @@
       "day": "Thursday",
       "games": [
         {
-          "homeTeam": "Buccaneers",
+          "homeTeam": "Bucs",
           "awayTeam": "Commanders",
-          "winner": "Buccaneers",
+          "winner": "Bucs",
           "picks": {
-            "jim": "Buccaneers",
+            "jim": "Bucs",
             "monty": "Commanders",
-            "dan": "Buccaneers",
+            "dan": "Bucs",
             "david": "Commanders"
           }
         }
@@ -57,13 +57,13 @@
         },
         {
           "homeTeam": "Bengals",
-          "awayTeam": "Patriots",
+          "awayTeam": "Pats",
           "winner": "Bengals",
           "picks": {
-            "jim": "Patriots",
-            "monty": "Patriots",
-            "dan": "Patriots",
-            "david": "Patriots"
+            "jim": "Pats",
+            "monty": "Pats",
+            "dan": "Pats",
+            "david": "Pats"
           }
         },
         {

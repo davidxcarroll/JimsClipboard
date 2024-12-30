@@ -9,7 +9,7 @@ export function ParticipantsHeader() {
       lg:text-3xl md:text-2xl text-xl
       shadow-[0_1px_0_rgba(0,0,0,.1)]
     ">
-      <div className="w-1/5 min-w-[150px] flex items-center justify-center" />
+      <div className="w-1/5 min-w-[130px] flex items-center justify-center" />
       
       {participants.map((name, index) => (
         <>

@@ -70,7 +70,7 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
     <div className="flex flex-col marker lg:text-3xl md:text-2xl text-xl">
       {/* Home Team Row */}
       <div className="flex flex-row">
-        <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
+        <div className="w-1/5 h-auto min-w-[130px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
           {renderTeamName(homeTeam, winningTeam === homeTeam)}
         </div>
         <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
@@ -95,7 +95,7 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
 
       {/* Away Team Row */}
       <div className="flex flex-row">
-        <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
+        <div className="w-1/5 h-auto min-w-[130px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
           {renderTeamName(awayTeam, winningTeam === awayTeam)}
         </div>
         <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">

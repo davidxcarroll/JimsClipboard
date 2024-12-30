@@ -6,7 +6,7 @@
       "day": "Thursday",
       "games": [
         {
-          "homeTeam": "Buccaneers",
+          "homeTeam": "Bucs",
           "awayTeam": "Commanders",
           "winner": null,
           "picks": {
@@ -57,7 +57,7 @@
         },
         {
           "homeTeam": "Bengals",
-          "awayTeam": "Patriots",
+          "awayTeam": "Pats",
           "winner": null,
           "picks": {
             "jim": null,
