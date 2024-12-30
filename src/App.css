@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 html, body {
-    background-color: #000;
+    background-image: url('assets/board-100.gif');
+    background-repeat: repeat;
+    background-size: 1500px;
 }
 
 /* Fonts */

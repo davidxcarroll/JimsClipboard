@@ -10,7 +10,7 @@ import { CircleTeamLg } from '../components/circles/circleTeamLg'
 import clipImage from '../assets/clip-305.png'
 
 export function Overview() {
-    const [currentWeek, setCurrentWeek] = useState(2)
+    const [currentWeek, setCurrentWeek] = useState(1)
     const selectRef = useRef(null)
     const weekData = getWeekSchedule(currentWeek)
 
@@ -31,28 +31,32 @@ export function Overview() {
     }
 
     return (
-        <div className="flex flex-col gap-8 bg-white sm:px-8">
+        <div className="flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-32">
             <div className="
-        relative z-10 flex flex-col items-center justify-center
-        lg:-mt-32 md:-mt-32 sm:-mt-28 xs:-mt-20 -mt-14
-      ">
+                relative z-10 flex flex-col items-center justify-center
+                lg:-mt-28 md:-mt-24 xs:-mt-20 -mt-20
+            ">
                 <img
-                    className="lg:w-[700px] sm:w-[600px] h-auto"
+                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[400px] h-auto"
                     src={clipImage}
                     alt="Clipboard"
                 />
 
                 {/* Week Selection Controls */}
                 <div className="
-                xl:absolute bottom-0 left-0
+                absolute left-1/2 -translate-x-1/2
+                lg:bottom-8 md:bottom-5 sm:bottom-2 xs:bottom-2 bottom-1
+                bg-amber-300 mix-blend-hard-light
+                -rotate-2 rounded-sm
                 flex flex-row justify-center items-center
-                xl:mt-0 mt-4
-                chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400 text-center
+                py-1 px-1
+                xl:mt-0 mt-2
+                chakra uppercase lg:text-xl md:text-lg text-base text-center
                 ">
                     <button
                         onClick={handlePrevWeek}
                         disabled={currentWeek === 1}
-                        className="flex items-center justify-center p-2 material-symbols-sharp disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center material-symbols-sharp sm:w-8 w-6 sm:h-8 h-6 bg-black rounded-full text-white sm:text-3xl text-2xl disabled:text-black disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_left_alt
                     </button>
@@ -61,7 +65,7 @@ export function Overview() {
                         onClick={handleWeekClick}
                         className="
                             flex items-center justify-center
-                            p-2 pl-4 uppercase align-middle
+                            p-1 pl-4 uppercase align-middle
                         ">
                         Week {currentWeek} <span className="material-symbols-sharp">arrow_drop_down</span>
                     </button>
@@ -80,7 +84,7 @@ export function Overview() {
                     <button
                         onClick={handleNextWeek}
                         disabled={currentWeek === 3}
-                        className="flex items-center justify-center p-2 material-symbols-sharp disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center material-symbols-sharp sm:w-8 w-6 sm:h-8 h-6 bg-black rounded-full text-white sm:text-3xl text-2xl disabled:text-black disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_right_alt
                     </button>
@@ -92,34 +96,31 @@ export function Overview() {
             lg:text-3xl md:text-2xl text-xl
             shadow-[0_1px_0_rgba(0,0,0,.1)]
             ">
-                <div className="w-1/5 min-w-[120px] flex items-center justify-center"></div>
+                <div className="w-1/5 min-w-[150px] flex items-center justify-center"></div>
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-[450px]:-rotate-45">Jim</span>
+                    <span className="max-sm:-rotate-45">Jim</span>
                 </div>
                 <div className="w-[1.5px] bg-neutral-200" />
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-[450px]:-rotate-45">Monty</span>
+                    <span className="max-sm:-rotate-45">Monty</span>
                 </div>
                 <div className="w-[1.5px] bg-neutral-200" />
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-[450px]:-rotate-45">Dan</span>
+                    <span className="max-sm:-rotate-45">Dan</span>
                 </div>
                 <div className="w-[1.5px] bg-neutral-200" />
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-[450px]:-rotate-45">David</span>
-                </div>
-                <div className="w-[1.5px] bg-neutral-200" />
-                <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-[450px]:-rotate-45">Greg</span>
+                    <span className="max-sm:-rotate-45">David</span>
                 </div>
             </div>
 
             {weekData && weekData.matchups.map((dateGroup, index) => (
-                <div className="flex flex-col lg:gap-8 gap-8" key={index}>
+                <div className="flex flex-col lg:gap-12 gap-8" key={index}>
 
                     {/* Date Header */}
                     <div className="
-                    flex items-center h-12 max-sm:pl-2 chakra bg-white sticky top-0 z-10
+                    flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
+                    md:px-8 px-2 py-2
                     uppercase lg:text-xl md:text-lg text-base text-neutral-400
                     ">
                         {dateGroup.day.slice(0, 3)} {new Date(dateGroup.date).toLocaleDateString('en-US', {
@@ -130,54 +131,18 @@ export function Overview() {
 
                     {/* Games for this date */}
                     {dateGroup.games.map((game, gameIndex) => (
-                        <MatchupRow
-                            key={gameIndex}
-                            homeTeam={game.homeTeam}
-                            awayTeam={game.awayTeam}
-                        />
+                    <MatchupRow
+                        key={gameIndex}
+                        homeTeam={game.homeTeam}
+                        awayTeam={game.awayTeam}
+                        week={currentWeek}
+                        winningTeam={game.winner} // Add this to your data
+                        picks={game.picks} // Add this to your data structure
+                    />
                     ))}
 
                 </div>
             ))}
-
-            <div className="mt-20 text-3xl text-blue-500">Static test</div>
-
-            {/* matchup row */}
-            <div className="
-                flex flex-col gap-2 marker mb-12
-                marker
-                lg:text-3xl md:text-2xl text-xl
-            ">
-
-                <div className="flex flex-row gap-2">
-                    <div className="w-1/5 flex items-center justify-start">
-                        <div className="relative inline">
-                            Seahawks
-                        </div>
-                    </div>
-                    <div className="w-1/5 flex items-center justify-center">✔</div>
-                    <div className="w-1/5 flex items-center justify-center"></div>
-                    <div className="w-1/5 flex items-center justify-center">✔</div>
-                    <div className="w-1/5 flex items-center justify-center">✔</div>
-                </div>
-
-                <div className="w-full h-[1px] bg-black/10" />
-
-                <div className="flex flex-row gap-2 mb-12">
-                    <div className="w-1/5 flex items-center justify-start">
-                        <div className="relative inline">
-                            <CircleTeamSm />49ers
-                        </div>
-                    </div>
-                    <div className="w-1/5 flex items-center justify-center"></div>
-                    <div className="relative w-1/5 flex items-center justify-center">
-                        <CircleCheck01 />✔
-                    </div>
-                    <div className="w-1/5 flex items-center justify-center"></div>
-                    <div className="w-1/5 flex items-center justify-center"></div>
-                </div>
-
-            </div>
 
         </div>
     )

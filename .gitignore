@@ -37,3 +37,4 @@ lerna-debug.log*
 *.sw?
 *.swp
 *.swo
+src/assets/board.psd

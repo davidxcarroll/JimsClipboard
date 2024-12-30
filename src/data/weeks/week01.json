@@ -2,84 +2,97 @@
   "week": 1,
   "matchups": [
     {
-      "date": "2024-09-05",
+      "date": "2024-09-04",
       "day": "Thursday",
       "games": [
         {
-          "homeTeam": "Chiefs",
-          "awayTeam": "Ravens"
+          "homeTeam": "Buccaneers",
+          "awayTeam": "Commanders",
+          "winner": "Buccaneers",
+          "picks": {
+            "jim": "Buccaneers",
+            "monty": "Commanders",
+            "dan": "Buccaneers",
+            "david": "Commanders"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2024-09-07",
+      "day": "Sunday",
+      "games": [
+        {
+          "homeTeam": "Eagles",
+          "awayTeam": "Packers",
+          "winner": "Packers",
+          "picks": {
+            "jim": "Eagles",
+            "monty": "Packers",
+            "dan": "Eagles",
+            "david": "Packers"
+          }
+        },
+        {
+          "homeTeam": "Cardinals",
+          "awayTeam": "Bills",
+          "winner": "Cardinals",
+          "picks": {
+            "jim": "Bills",
+            "monty": "Cardinals",
+            "dan": "Cardinals",
+            "david": "Bills"
+          }
+        },
+        {
+          "homeTeam": "Bears",
+          "awayTeam": "Titans",
+          "winner": "Bears",
+          "picks": {
+            "jim": "Titans",
+            "monty": "Bears",
+            "dan": "Bears",
+            "david": "Titans"
+          }
+        },
+        {
+          "homeTeam": "Bengals",
+          "awayTeam": "Patriots",
+          "winner": "Bengals",
+          "picks": {
+            "jim": "Patriots",
+            "monty": "Patriots",
+            "dan": "Patriots",
+            "david": "Patriots"
+          }
+        },
+        {
+          "homeTeam": "Colts",
+          "awayTeam": "Texans",
+          "winner": "Colts",
+          "picks": {
+            "jim": "Colts",
+            "monty": "Colts",
+            "dan": "Colts",
+            "david": "Texans"
+          }
         }
       ]
     },
     {
       "date": "2024-09-08",
-      "day": "Sunday",
-      "games": [
-        {
-          "homeTeam": "Eagles",
-          "awayTeam": "Packers"
-        },
-        {
-          "homeTeam": "Bills",
-          "awayTeam": "Cardinals"
-        },
-        {
-          "homeTeam": "Bears",
-          "awayTeam": "Titans"
-        },
-        {
-          "homeTeam": "Bengals",
-          "awayTeam": "Patriots"
-        },
-        {
-          "homeTeam": "Colts",
-          "awayTeam": "Texans"
-        },
-        {
-          "homeTeam": "Dolphins",
-          "awayTeam": "Jaguars"
-        },
-        {
-          "homeTeam": "Saints",
-          "awayTeam": "Panthers"
-        },
-        {
-          "homeTeam": "Giants",
-          "awayTeam": "Vikings"
-        },
-        {
-          "homeTeam": "Chargers",
-          "awayTeam": "Raiders"
-        },
-        {
-          "homeTeam": "Seahawks",
-          "awayTeam": "Broncos"
-        },
-        {
-          "homeTeam": "Browns",
-          "awayTeam": "Cowboys"
-        },
-        {
-          "homeTeam": "Buccaneers",
-          "awayTeam": "Commanders"
-        },
-        {
-          "homeTeam": "Lions",
-          "awayTeam": "Rams"
-        },
-        {
-          "homeTeam": "Falcons",
-          "awayTeam": "Steelers"
-        }
-      ]
-    },
-    {
-      "date": "2024-09-09",
       "day": "Monday",
       "games": [
         {
-          "homeTeam": "49ers",
-          "awayTeam": "Jets"
+          "homeTeam": "Dolphins",
+          "awayTeam": "Jaguars",
+          "winner": "Dolphins",
+          "picks": {
+            "jim": "Jaguars",
+            "monty": "Jaguars",
+            "dan": "Dolphins",
+            "david": "Jaguars"
+          }
         }
       ]
     }

@@ -3,9 +3,12 @@ import { NavLink } from 'react-router-dom'
 export function Navigation() {
   return (
     <nav className="
-      relative z-50 sm:w-full min-w-[360px] md:h-32 sm:h-28 h-fit
-      grid sm:grid-cols-5 grid-cols-4 max-[450px]:grid-cols-2 auto-rows-fr
-      chakra lg:text-2xl md:text-xl text-lg text-white
+      relative z-50
+      sm:w-full min-w-[360px]
+      lg:h-28 sm:h-24 h-fit
+      max-sm:mb-4 max-xs:mb-12
+      grid sm:grid-cols-5 grid-cols-2 auto-rows-fr
+      chakra lg:text-2xl md:text-xl text-lg
     ">
       <NavLink 
         to="/"
