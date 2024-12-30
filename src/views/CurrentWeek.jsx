@@ -18,12 +18,12 @@ export function CurrentWeek() {
     return (
         <div className="
             flex flex-col gap-12 bg-white sm:px-8
-            md:mt-0 sm:mt-0 xs:mt-24 mt-12
+            md:mt-0 sm:mt-0 xs:mt-20 mt-8
         ">
 
             <div className="
             relative z-10 flex items-center justify-center max-md:-mb-8
-            lg:-mt-32 md:-mt-32 sm:-mt-28 xs:-mt-24 -mt-16
+            lg:-mt-32 md:-mt-32 sm:-mt-28 xs:-mt-20 -mt-14
             ">
                 <img
                     className="lg:w-[700px] sm:w-[600px] h-auto"
