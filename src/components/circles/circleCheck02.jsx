@@ -1,7 +1,7 @@
 export function CircleCheck02({ className = "", ...props }) {
   return (
     <svg
-      className={`absolute h-[150%] w-[300%] top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 ${className}`}
+      className={`absolute h-[150%] w-[220%] top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 ${className}`}
       viewBox="0 0 80 60"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

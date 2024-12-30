@@ -1,173 +1,113 @@
+import { useState } from 'react'
+import { getWeekSchedule } from '../data/schedule'
 import clipImage from '../assets/clip-305.png'
 
 export function YourPicks() {
-    return (
-        <div className="
-        flex flex-col bg-neutral-100 pb-32
-        ">
+    const [picks, setPicks] = useState({})
+    const weekData = getWeekSchedule(1) // Always week 1 for picks
 
-            <div className="
-            relative z-10 flex items-center justify-center
-            lg:-mt-28 md:-mt-24 sm:-mt-20 xs:-mt-20 -mt-14
-            ">
+    const handleTeamClick = (gameId, team) => {
+        setPicks(prevPicks => {
+            // If clicking the same team that's already picked, remove it
+            if (prevPicks[gameId] === team) {
+                const newPicks = { ...prevPicks }
+                delete newPicks[gameId]
+                return newPicks
+            }
+            // Otherwise set/update the pick for this game
+            return {
+                ...prevPicks,
+                [gameId]: team
+            }
+        })
+    }
+
+    return (
+        <div className="flex flex-col bg-neutral-100 pb-12">
+
+            <div className="relative z-[100] flex flex-col items-center justify-center mb-4 lg:-mt-28 md:-mt-24 xs:-mt-20 -mt-20">
                 <img
-                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[400px] h-auto"
+                    className="lg:w-[700px] md:w-[600px] w-[500px] min-w-[340px] h-auto"
                     src={clipImage}
                     alt="Clipboard"
                 />
             </div>
 
-            <div className="
-              flex items-center justify-center h-12 chakra bg-neutral-100 sticky top-0 z-20
-              uppercase lg:text-xl md:text-lg text-base text-neutral-400
-              shadow-[0_1px_0_#ddd]
-            ">
-                Thu Sep 4
-            </div>
+            {weekData && weekData.matchups.map((dateGroup, dateIndex) => (
+                <div key={dateIndex} className="flex flex-col">
+                    {/* Date Header */}
+                    <div className="
+                        flex items-center justify-center h-12 chakra bg-neutral-100 sticky top-0 z-20
+                        uppercase lg:text-xl md:text-lg text-base text-neutral-400
+                        shadow-[0_1px_0_#ddd]
+                    ">
+                        {dateGroup.day} {new Date(dateGroup.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        })}
+                    </div>
 
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Chiefs ✔
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Ravens
-                </div>
-            </div>
+                    {/* Games */}
+                    {dateGroup.games.map((game, gameIndex) => {
+                        const gameId = `${dateIndex}-${gameIndex}`
+                        const selectedTeam = picks[gameId]
 
-            <div className="
-              flex items-center justify-center h-12 chakra bg-neutral-100 sticky top-0 z-20
-              uppercase lg:text-xl md:text-lg text-base text-neutral-400
-              shadow-[0_1px_0_#ddd,0_-1px_0_#ddd]
-            ">
-                Sun Sep 7
-            </div>
+                        return (
+                            <div key={gameIndex} className="relative flex flex-row items-stretch justify-center">
+                                {/* Home Team */}
+                                <div 
+                                    onClick={() => handleTeamClick(gameId, game.homeTeam)}
+                                    className={`
+                                        w-1/2 flex items-center justify-center p-8 marker text-center 
+                                        lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl cursor-pointer
+                                        ${selectedTeam === game.homeTeam ? '' : 'text-neutral-400'}
+                                    `}
+                                >
+                                    {game.homeTeam} {selectedTeam === game.homeTeam && '✔'}
+                                </div>
 
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Packers
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Eagles ✔
-                </div>
-            </div>
+                                {/* @ Symbol */}
+                                <div className="
+                                    absolute w-10 h-10 z-0 
+                                    flex items-center justify-center 
+                                    top-1/2 -translate-y-1/2 
+                                    left-1/2 -translate-x-1/2 
+                                    chakra lg:text-xl md:text-lg text-base text-neutral-400
+                                ">
+                                    @
+                                </div>
 
-            <div className="w-full h-[1px] bg-neutral-200" />
+                                {/* Away Team */}
+                                <div 
+                                    onClick={() => handleTeamClick(gameId, game.awayTeam)}
+                                    className={`
+                                        w-1/2 flex items-center justify-center p-8 marker text-center 
+                                        lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl cursor-pointer
+                                        ${selectedTeam === game.awayTeam ? '' : 'text-neutral-400'}
+                                    `}
+                                >
+                                    {game.awayTeam} {selectedTeam === game.awayTeam && '✔'}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            ))}
 
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Bills ✔
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Cardinals
-                </div>
-            </div>
+            {/* Divider */}
+            <div className="w-full h-[1px] sm:mt-24 mt-12 bg-neutral-200" />
 
-            <div className="w-full h-[1px] bg-neutral-200" />
-
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Titans
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Bears ✔
-                </div>
-            </div>
-
-            <div className="w-full h-[1px] bg-neutral-200" />
-
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Patriots
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Bengals ✔
+            <div className="flex items-center justify-center p-8">
+                <div className="
+                    flex items-center justify-center py-4 px-8 bg-black cursor-pointer
+                    chakra uppercase text-white
+                    lg:text-3xl md:text-2xl sm:text-xl text-lg
+                ">
+                    Save
                 </div>
             </div>
 
-            <div className="w-full h-[1px] bg-neutral-200" />
 
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Colts ✔
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Texans
-                </div>
-            </div>
-
-            <div className="w-full h-[1px] bg-neutral-200" />
-
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Dolphins ✔
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Jaguars
-                </div>
-            </div>
-
-            <div className="w-full h-[1px] bg-neutral-200" />
-
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Saints ✔
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Panthers
-                </div>
-            </div>
-
-            <div className="w-full h-[1px] bg-neutral-200" />
-
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Vikings
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Giants ✔
-                </div>
-            </div>
-
-            <div className="w-full h-[1px] bg-neutral-200" />
-
-            <div className="relative flex flex-row items-stretch justify-center">
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl cursor-pointer">
-                    Chargers ✔
-                </div>
-                <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
-                    @
-                </div>
-                <div className="w-1/2 flex items-center justify-center p-8 marker text-center lg:text-5xl md:text-4xl sm:text-3xl text-2xl text-neutral-400 cursor-pointer">
-                    Raiders
-                </div>
-            </div>
 
         </div>
     )

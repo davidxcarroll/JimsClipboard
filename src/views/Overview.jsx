@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { getWeekSchedule } from '../data/schedule'
+import { ParticipantsHeader } from '../components/shared/ParticipantsHeader'
 import { MatchupRow } from '../components/shared/MatchupRow'
 import { CircleCheck01 } from '../components/circles/circleCheck01'
 import { CircleCheck02 } from '../components/circles/circleCheck02'
@@ -33,11 +34,11 @@ export function Overview() {
     return (
         <div className="flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-32">
             <div className="
-                relative z-10 flex flex-col items-center justify-center
+                relative z-[100] flex flex-col items-center justify-center
                 lg:-mt-28 md:-mt-24 xs:-mt-20 -mt-20
             ">
                 <img
-                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[400px] h-auto"
+                    className="lg:w-[700px] md:w-[600px] w-[500px] min-w-[340px] h-auto"
                     src={clipImage}
                     alt="Clipboard"
                 />
@@ -46,19 +47,19 @@ export function Overview() {
                 <div className="
                 absolute left-1/2 -translate-x-1/2
                 lg:bottom-8 md:bottom-5 sm:bottom-2 xs:bottom-4 bottom-2
-                bg-amber-200 mix-blend-hard-light shadow-[-1px_1px_1px_rgba(0,0,0,.2)]
+                bg-amber-200 mix-blend-hard-light shadow-[-1px_1px_1px_rgba(0,0,0,.1)]
                 -rotate-2 rounded-sm
                 flex flex-row justify-center items-center
-                xl:mt-0 mt-2 px-3
+                xl:mt-0 mt-2
                 chakra uppercase lg:text-xl md:text-lg text-base text-center
                 ">
-                    <button
+                    {/* <button
                         onClick={handlePrevWeek}
                         disabled={currentWeek === 1}
                         className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_left_alt
-                    </button>
+                    </button> */}
 
                     <button
                         onClick={handleWeekClick}
@@ -80,38 +81,17 @@ export function Overview() {
                         <option value={3}>WEEK 3</option>
                     </select>
 
-                    <button
+                    {/* <button
                         onClick={handleNextWeek}
                         disabled={currentWeek === 3}
                         className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_right_alt
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
-            <div className="
-            flex flex-row h-12 marker sticky top-0 z-50
-            lg:text-3xl md:text-2xl text-xl
-            shadow-[0_1px_0_rgba(0,0,0,.1)]
-            ">
-                <div className="w-1/5 min-w-[150px] flex items-center justify-center"></div>
-                <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">Jim</span>
-                </div>
-                <div className="w-[1.5px] bg-neutral-200" />
-                <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">Monty</span>
-                </div>
-                <div className="w-[1.5px] bg-neutral-200" />
-                <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">Dan</span>
-                </div>
-                <div className="w-[1.5px] bg-neutral-200" />
-                <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">David</span>
-                </div>
-            </div>
+            <ParticipantsHeader />
 
             {weekData && weekData.matchups.map((dateGroup, index) => (
                 <div className="flex flex-col lg:gap-12 gap-8" key={index}>

@@ -73,19 +73,19 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
         <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
           {renderTeamName(homeTeam, winningTeam === homeTeam)}
         </div>
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(homeTeam, 'jim')}
         </div>
         <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(homeTeam, 'monty')}
         </div>
         <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(homeTeam, 'dan')}
         </div>
         <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(homeTeam, 'david')}
         </div>
       </div>
@@ -95,22 +95,22 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
 
       {/* Away Team Row */}
       <div className="flex flex-row">
-        <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-neutral-100 sticky left-0 z-10">
+        <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
           {renderTeamName(awayTeam, winningTeam === awayTeam)}
         </div>
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(awayTeam, 'jim')}
         </div>
         <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(awayTeam, 'monty')}
         </div>
         <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(awayTeam, 'dan')}
         </div>
         <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[50px] flex items-center justify-center">
+        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
           {renderCheckmark(awayTeam, 'david')}
         </div>
       </div>
