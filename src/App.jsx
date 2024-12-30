@@ -1,5 +1,5 @@
 import { Navigation } from './components/layout/Navigation'
-import { CurrentWeek } from './views/CurrentWeek'
+import { Overview } from './views/Overview'
 import { YourPicks } from './views/YourPicks'
 import { Standings } from './views/Standings'
 import { Settings } from './views/Settings'
@@ -12,7 +12,7 @@ function App() {
         {/* <Header /> */}
         <Navigation />
         <Routes>
-          <Route path="/" element={<CurrentWeek />} />
+          <Route path="/" element={<Overview />} />
           <Route path="/picks" element={<YourPicks />} />
           <Route path="/standings" element={<Standings />} />
           <Route path="/settings" element={<Settings />} />

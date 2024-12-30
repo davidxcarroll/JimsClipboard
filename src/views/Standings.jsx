@@ -2,14 +2,17 @@ import clipImage from '../assets/clip-305.png'
 
 export function Standings() {
     return (
-        <div className="flex flex-col pb-24 gap-24 sm:px-8 bg-white">
+        <div className="
+            flex flex-col gap-12 bg-white sm:px-8
+            md:mt-0 sm:mt-0 xs:mt-20 mt-8
+        ">
 
             <div className="
-                relative z-10 flex items-center justify-center
-                lg:-mt-32 md:-mt-28 -mt-16
+            relative z-10 flex items-center justify-center max-md:-mb-8
+            lg:-mt-32 md:-mt-32 sm:-mt-28 xs:-mt-20 -mt-14
             ">
                 <img
-                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[300px] h-auto"
+                    className="lg:w-[700px] sm:w-[600px] h-auto"
                     src={clipImage}
                     alt="Clipboard"
                 />

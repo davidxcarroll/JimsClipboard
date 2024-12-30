@@ -15,10 +15,7 @@ export function Navigation() {
         `}
       >
         <p className="text-center">
-          Week 5
-          <span className="material-symbols-sharp align-middle">
-            arrow_drop_down
-          </span>
+          Overview
         </p>
       </NavLink>
 
