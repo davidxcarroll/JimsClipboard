@@ -85,13 +85,13 @@
       "games": [
         {
           "homeTeam": "Dolphins",
-          "awayTeam": "Jaguars",
+          "awayTeam": "Jags",
           "winner": "Dolphins",
           "picks": {
-            "jim": "Jaguars",
-            "monty": "Jaguars",
+            "jim": "Jags",
+            "monty": "Jags",
             "dan": "Dolphins",
-            "david": "Jaguars"
+            "david": "Jags"
           }
         }
       ]
