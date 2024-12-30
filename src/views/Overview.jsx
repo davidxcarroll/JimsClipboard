@@ -45,18 +45,17 @@ export function Overview() {
                 {/* Week Selection Controls */}
                 <div className="
                 absolute left-1/2 -translate-x-1/2
-                lg:bottom-8 md:bottom-5 sm:bottom-2 xs:bottom-2 bottom-1
-                bg-amber-300 mix-blend-hard-light
+                lg:bottom-8 md:bottom-5 sm:bottom-2 xs:bottom-4 bottom-2
+                bg-amber-200 mix-blend-hard-light shadow-[-1px_1px_1px_rgba(0,0,0,.2)]
                 -rotate-2 rounded-sm
                 flex flex-row justify-center items-center
-                py-1 px-1
-                xl:mt-0 mt-2
+                xl:mt-0 mt-2 px-3
                 chakra uppercase lg:text-xl md:text-lg text-base text-center
                 ">
                     <button
                         onClick={handlePrevWeek}
                         disabled={currentWeek === 1}
-                        className="flex items-center justify-center material-symbols-sharp sm:w-8 w-6 sm:h-8 h-6 bg-black rounded-full text-white sm:text-3xl text-2xl disabled:text-black disabled:opacity-10 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_left_alt
                     </button>
@@ -84,7 +83,7 @@ export function Overview() {
                     <button
                         onClick={handleNextWeek}
                         disabled={currentWeek === 3}
-                        className="flex items-center justify-center material-symbols-sharp sm:w-8 w-6 sm:h-8 h-6 bg-black rounded-full text-white sm:text-3xl text-2xl disabled:text-black disabled:opacity-10 disabled:cursor-not-allowed"
+                        className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_right_alt
                     </button>

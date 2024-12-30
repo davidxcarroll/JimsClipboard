@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen min-w-full w-fit flex flex-col">
+      <div className="min-h-screen min-w-full w-fit flex flex-col pb-24">
         {/* <Header /> */}
         <Navigation />
         <Routes>
