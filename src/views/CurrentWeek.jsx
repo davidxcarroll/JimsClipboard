@@ -16,14 +16,17 @@ export function CurrentWeek() {
     }
 
     return (
-        <div className="flex flex-col gap-12 sm:px-8 bg-white">
+        <div className="
+            flex flex-col gap-12 bg-white sm:px-8
+            md:mt-0 sm:mt-0 xs:mt-24 mt-12
+        ">
 
             <div className="
             relative z-10 flex items-center justify-center max-md:-mb-8
-            lg:-mt-32 md:-mt-28 -mt-16
+            lg:-mt-32 md:-mt-32 sm:-mt-28 xs:-mt-24 -mt-16
             ">
                 <img
-                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[400px] h-auto"
+                    className="lg:w-[700px] sm:w-[600px] h-auto"
                     src={clipImage}
                     alt="Clipboard"
                 />
@@ -36,16 +39,16 @@ export function CurrentWeek() {
             ">
                 <div className="w-1/5 min-w-[120px] flex items-center justify-center"></div>
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">Jim</span>
+                    <span className="max-[450px]:-rotate-45">Jim</span>
                 </div>
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">Monty</span>
+                    <span className="max-[450px]:-rotate-45">Monty</span>
                 </div>
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">Dan</span>
+                    <span className="max-[450px]:-rotate-45">Dan</span>
                 </div>
                 <div className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-                    <span className="max-sm:-rotate-45">David</span>
+                    <span className="max-[450px]:-rotate-45">David</span>
                 </div>
             </div>
 

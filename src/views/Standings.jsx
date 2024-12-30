@@ -9,7 +9,7 @@ export function Standings() {
                 lg:-mt-32 md:-mt-28 -mt-16
             ">
                 <img
-                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[400px] h-auto"
+                    className="lg:w-[700px] md:w-[600px] w-[450px] min-w-[300px] h-auto"
                     src={clipImage}
                     alt="Clipboard"
                 />

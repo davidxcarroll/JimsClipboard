@@ -3,14 +3,14 @@ import { NavLink } from 'react-router-dom'
 export function Navigation() {
   return (
     <nav className="
-      relative z-50 sm:w-full w-screen md:h-32 sm:h-28 h-fit max-sm:mb-16
-      flex flex-row flex-wrap items-center justify-between
+      relative z-50 sm:w-full min-w-[360px] md:h-32 sm:h-28 h-fit
+      grid sm:grid-cols-5 grid-cols-4 max-[450px]:grid-cols-2 auto-rows-fr
       chakra lg:text-2xl md:text-xl text-lg text-white
     ">
       <NavLink 
         to="/"
         className={({ isActive }) => `
-          flex flex-1 flex-row whitespace-nowrap justify-center sm:items-center items-start p-2 
+          flex whitespace-nowrap justify-center sm:items-center items-start p-2 
           hover:underline cursor-pointer ${isActive ? 'underline' : ''}
         `}
       >
@@ -25,19 +25,19 @@ export function Navigation() {
       <NavLink 
         to="/picks"
         className={({ isActive }) => `
-          flex flex-1 flex-row whitespace-nowrap justify-center sm:items-center items-start p-2 
+          flex whitespace-nowrap justify-center sm:items-center items-start p-2 
           hover:underline cursor-pointer ${isActive ? 'underline' : ''}
         `}
       >
         <p className="text-center">Your Picks</p>
       </NavLink>
 
-      <div className="flex flex-1 max-sm:hidden" />
+      <div className="max-sm:hidden" />
 
       <NavLink 
         to="/standings"
         className={({ isActive }) => `
-          flex flex-1 flex-row whitespace-nowrap justify-center sm:items-center items-start p-2 
+          flex whitespace-nowrap justify-center sm:items-center items-start p-2 
           hover:underline cursor-pointer ${isActive ? 'underline' : ''}
         `}
       >
@@ -47,7 +47,7 @@ export function Navigation() {
       <NavLink 
         to="/settings"
         className={({ isActive }) => `
-          flex flex-1 flex-row whitespace-nowrap justify-center sm:items-center items-start p-2 
+          flex whitespace-nowrap justify-center sm:items-center items-start p-2 
           hover:underline cursor-pointer ${isActive ? 'underline' : ''}
         `}
       >
