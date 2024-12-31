@@ -1,4 +1,7 @@
+import React from 'react'
+
 export function ParticipantsHeader() {
+
   const participants = ['Jim', 'Monty', 'Dan', 'David']
   
   const truncateName = (name) => name.slice(0, 8)
@@ -14,14 +17,14 @@ export function ParticipantsHeader() {
       <div className="w-[1.5px] bg-neutral-200" />
       
       {participants.map((name, index) => (
-        <>
+        <React.Fragment key={name}>
           <div key={name} className="w-1/5 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
             <span className="max-[450px]:-rotate-45">{truncateName(name)}</span>
           </div>
           {index < participants.length - 1 && (
             <div className="w-[1.5px] bg-neutral-200" />
           )}
-        </>
+        </React.Fragment>
       ))}
     </div>
   )

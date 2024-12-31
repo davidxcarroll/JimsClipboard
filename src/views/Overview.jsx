@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { getWeekSchedule } from '../data/schedule'
 import { ParticipantsHeader } from '../components/shared/ParticipantsHeader'
 import { MatchupRow } from '../components/shared/MatchupRow'
-import clipImage from '../assets/clip-305.png'
+import { NavLink } from 'react-router-dom'
 
 export function Overview() {
     const [currentWeek, setCurrentWeek] = useState(1)
@@ -26,65 +26,27 @@ export function Overview() {
     }
 
     return (
-        <div className="flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-32">
-            <div className="
-                relative z-[100] flex flex-col items-center justify-center
-                lg:-mt-28 md:-mt-24 xs:-mt-20 -mt-20
-            ">
-                <img
-                    className="lg:w-[700px] md:w-[600px] w-[500px] min-w-[340px] h-auto"
-                    src={clipImage}
-                    alt="Clipboard"
-                />
+        <div className="
+            flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-24
+            lg:pt-28 md:pt-24 sm:pt-20 xs:pt-16 pt-12
+        ">
 
-                {/* Week Selection Controls */}
-                {/* <div className="
-                absolute left-1/2 -translate-x-1/2
-                lg:bottom-8 md:bottom-5 sm:bottom-2 xs:bottom-4 bottom-2
-                bg-amber-200 mix-blend-hard-light shadow-[-1px_1px_1px_rgba(0,0,0,.1)]
-                -rotate-2 rounded-sm
-                flex flex-row justify-center items-center
-                xl:mt-0 mt-2
-                chakra uppercase lg:text-xl md:text-lg text-base text-center
+            {currentWeek === 3 && (
+                <NavLink
+                to="/picks"
+                className="
+                flex flex-row items-center justify-center my-2
+                lg:mx-8 mx-2
+                lg:p-8 p-6
+                chakra uppercase text-white
+                cursor-pointer bg-orange-600 hover:bg-orange-500
+                shadow-md hover:shadow-xl
+                transition
+                lg:text-3xl md:text-2xl text-xl
                 ">
-                    <button
-                        onClick={handlePrevWeek}
-                        disabled={currentWeek === 1}
-                        className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
-                    >
-                        arrow_left_alt
-                    </button>
-
-                    <button
-                        onClick={handleWeekClick}
-                        className="
-                            flex items-center justify-center
-                            p-1 pl-4 uppercase align-middle
-                        ">
-                        Week {currentWeek} <span className="material-symbols-sharp">arrow_drop_down</span>
-                    </button>
-
-                    <select
-                        ref={selectRef}
-                        value={currentWeek}
-                        onChange={(e) => setCurrentWeek(Number(e.target.value))}
-                        className="absolute opacity-0 cursor-pointer"
-                    >
-                        <option value={1}>WEEK 1</option>
-                        <option value={2}>WEEK 2</option>
-                        <option value={3}>WEEK 3</option>
-                    </select>
-
-                    <button
-                        onClick={handleNextWeek}
-                        disabled={currentWeek === 3}
-                        className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
-                    >
-                        arrow_right_alt
-                    </button>
-                </div> */}
-
-            </div>
+                    Pick Week {currentWeek}
+                </NavLink>
+            )}
 
             <ParticipantsHeader />
 
@@ -93,7 +55,7 @@ export function Overview() {
             relative z-[100]
             flex items-center
             h-12 chakra
-            sm:-mt-20 -mt-16
+            lg:-mt-20 -mt-16
             uppercase lg:text-xl md:text-lg text-base
             ">
                 {/* <button
@@ -104,7 +66,7 @@ export function Overview() {
                     arrow_left_alt
                 </button> */}
 
-                <div className="relative md:px-8 px-2 sticky left-0">
+                <div className="md:px-8 px-2 sticky left-0">
 
                     <button
                         onClick={handleWeekClick}
@@ -120,9 +82,7 @@ export function Overview() {
                         ref={selectRef}
                         value={currentWeek}
                         onChange={(e) => setCurrentWeek(Number(e.target.value))}
-                        className="bg-blue-500/50
-                            absolute top-1/2 -translate-y-1/2 opacity-0 cursor-pointer sm:w-32 w-28 h-8
-                        ">
+                        className="absolute top-1/2 -translate-y-1/2 opacity-0 cursor-pointer sm:w-32 w-28 h-8">
                         <option value={1}>WEEK 1</option>
                         <option value={2}>WEEK 2</option>
                         <option value={3}>WEEK 3</option>
