@@ -20,22 +20,41 @@ export function Settings() {
 
     // Load existing pick when component mounts
     useEffect(() => {
+        let isMounted = true  // For cleanup
+
         async function loadPick() {
-            if (!user) return
+            // Clear the selected team when there's no user
+            if (!user) {
+                setSelectedTeam('')
+                return
+            }
 
             try {
                 const docRef = doc(db, 'superBowlPicks', '2026', 'users', user.uid)
                 const docSnap = await getDoc(docRef)
 
-                if (docSnap.exists()) {
-                    setSelectedTeam(docSnap.data().team)
+                // Only set state if component is still mounted
+                if (isMounted) {
+                    if (docSnap.exists()) {
+                        setSelectedTeam(docSnap.data().team)
+                    } else {
+                        setSelectedTeam('')
+                    }
                 }
             } catch (err) {
                 console.error('Error loading pick:', err)
+                if (isMounted) {
+                    setSelectedTeam('')
+                }
             }
         }
 
         loadPick()
+
+        return () => {
+            isMounted = false
+            setSelectedTeam('')  // Clear selection when component unmounts
+        }
     }, [user])
 
     const handleTeamSelect = (e) => {
@@ -45,8 +64,6 @@ export function Settings() {
             savePick(team)
         }
     }
-
-    console.log('Team Data:', teamData)
 
     if (loading) {
         return <div className="flex justify-center items-center m-24 p-24 chakra text-xl">Loading...</div>
@@ -109,6 +126,8 @@ export function Settings() {
     }
 
     const handleLogout = async () => {
+        setSelectedTeam('')
+        
         const promise = signOut(auth)
 
         toast.promise(promise, {
@@ -140,11 +159,16 @@ export function Settings() {
         chakra sm:text-xl text-lg
         ">
 
-                <div className="
-            flex items-center justify-center marker
-            lg:text-5xl text-4xl
-            ">
-                    Settings
+                <div className="flex flex-col gap-2 items-center justify-center">
+                    <div className="
+                    flex items-center justify-center marker
+                    lg:text-5xl text-4xl
+                    ">
+                        Settings
+                    </div>
+                    <div className="text-neutral-500">
+                        {user.email}
+                    </div>
                 </div>
 
                 {/* Divider */}
