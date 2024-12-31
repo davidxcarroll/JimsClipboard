@@ -44,7 +44,7 @@ export function Overview() {
                 />
 
                 {/* Week Selection Controls */}
-                <div className="
+                {/* <div className="
                 absolute left-1/2 -translate-x-1/2
                 lg:bottom-8 md:bottom-5 sm:bottom-2 xs:bottom-4 bottom-2
                 bg-amber-200 mix-blend-hard-light shadow-[-1px_1px_1px_rgba(0,0,0,.1)]
@@ -53,13 +53,13 @@ export function Overview() {
                 xl:mt-0 mt-2
                 chakra uppercase lg:text-xl md:text-lg text-base text-center
                 ">
-                    {/* <button
+                    <button
                         onClick={handlePrevWeek}
                         disabled={currentWeek === 1}
                         className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_left_alt
-                    </button> */}
+                    </button>
 
                     <button
                         onClick={handleWeekClick}
@@ -81,17 +81,69 @@ export function Overview() {
                         <option value={3}>WEEK 3</option>
                     </select>
 
-                    {/* <button
+                    <button
                         onClick={handleNextWeek}
                         disabled={currentWeek === 3}
                         className="flex items-center justify-center material-symbols-sharp rounded-full sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
                     >
                         arrow_right_alt
-                    </button> */}
-                </div>
+                    </button>
+                </div> */}
+
             </div>
 
             <ParticipantsHeader />
+
+            {/* Week Selection Controls */}
+            <div className="
+            relative z-[100]
+            flex items-center
+            h-12 chakra
+            sm:-mt-20 -mt-16
+            uppercase lg:text-xl md:text-lg text-base
+            ">
+                {/* <button
+                    onClick={handlePrevWeek}
+                    disabled={currentWeek === 1}
+                    className="max-sm:hidden flex items-center justify-center material-symbols-sharp w-8 sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
+                >
+                    arrow_left_alt
+                </button> */}
+
+                <div className="relative md:px-8 px-2 sticky left-0">
+
+                    <button
+                        onClick={handleWeekClick}
+                        className="
+                            sm:w-32 w-28
+                            flex items-center justify-start
+                            uppercase align-middle
+                        ">
+                        Week {currentWeek} <span className="material-symbols-sharp">arrow_drop_down</span>
+                    </button>
+
+                    <select
+                        ref={selectRef}
+                        value={currentWeek}
+                        onChange={(e) => setCurrentWeek(Number(e.target.value))}
+                        className="bg-blue-500/50
+                            absolute top-1/2 -translate-y-1/2 opacity-0 cursor-pointer sm:w-32 w-28 h-8
+                        ">
+                        <option value={1}>WEEK 1</option>
+                        <option value={2}>WEEK 2</option>
+                        <option value={3}>WEEK 3</option>
+                    </select>
+
+                </div>
+
+                {/* <button
+                    onClick={handleNextWeek}
+                    disabled={currentWeek === 3}
+                    className="max-sm:hidden flex items-center justify-center material-symbols-sharp w-8 sm:text-3xl text-2xl disabled:opacity-10 disabled:cursor-not-allowed"
+                >
+                    arrow_right_alt
+                </button> */}
+            </div>
 
             {weekData && weekData.matchups.map((dateGroup, index) => (
                 <div className="flex flex-col lg:gap-12 gap-8" key={index}>
