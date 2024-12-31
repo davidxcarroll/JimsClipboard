@@ -21,4 +21,11 @@ html, body {
     font-family: "Chakra Petch", serif;
     font-weight: 700;
     font-style: normal;
-}  
+}
+
+i {
+  font-family: "Noto Emoji", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}

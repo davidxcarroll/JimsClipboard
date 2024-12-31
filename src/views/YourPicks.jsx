@@ -116,7 +116,7 @@ export function YourPicks() {
                         Save
                     </div>
 
-                    <span className="chakra uppercase text-base text-neutral-500">🔒 Deadline: Sep 24, 2025, 9:00 AM PST</span>
+                    <span className="chakra uppercase text-base text-neutral-500"><i>🔒</i> Deadline: Sep 5, 2025, 9:00 AM PST</span>
 
                 </div>
 

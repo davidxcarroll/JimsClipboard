@@ -14,9 +14,7 @@ export function useTeam(teamName) {
 
         async function fetchTeamData() {
             try {
-                console.log('Fetching team data for:', teamName)
                 const teams = await teamService.getAllTeams()
-                console.log('Sample team structure:', teams[0])
                 
                 const team = teams.find(t => t.team.displayName === teamName)
                 if (team) {

@@ -6,6 +6,8 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useTeam } from '../hooks/useTeam'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import toast from 'react-hot-toast'
+import emailjs from '@emailjs/browser'
+import { NFL_TEAMS } from '../store/nfl/teams'
 
 export function Settings() {
     const navigate = useNavigate()
@@ -94,16 +96,21 @@ export function Settings() {
         }
     }
 
-    const teams = [
-        "Arizona Cardinals", "Atlanta Falcons", "Baltimore Ravens", "Buffalo Bills",
-        "Carolina Panthers", "Chicago Bears", "Cincinnati Bengals", "Cleveland Browns",
-        "Dallas Cowboys", "Denver Broncos", "Detroit Lions", "Green Bay Packers",
-        "Houston Texans", "Indianapolis Colts", "Jacksonville Jaguars", "Kansas City Chiefs",
-        "Las Vegas Raiders", "Los Angeles Chargers", "Los Angeles Rams", "Miami Dolphins",
-        "Minnesota Vikings", "New England Patriots", "New Orleans Saints", "New York Giants",
-        "New York Jets", "Philadelphia Eagles", "Pittsburgh Steelers", "San Francisco 49ers",
-        "Seattle Seahawks", "Tampa Bay Buccaneers", "Tennessee Titans", "Washington Commanders"
-    ]
+    const sendWelcomeEmail = async (userEmail) => {
+        try {
+            await emailjs.send(
+                'service_7ksu80v',
+                'welcome',
+                {
+                    to_email: userEmail,
+                    // Add any other template variables you want to use
+                },
+                'AnHDdctKqqd6j64nS'
+            )
+        } catch (error) {
+            console.error('Error sending welcome email:', error)
+        }
+    }
 
     const handleAuth = async (e) => {
         e.preventDefault()
@@ -119,7 +126,11 @@ export function Settings() {
         })
 
         try {
-            await promise
+            const userCredential = await promise
+            if (isSignUp) {
+                // Send welcome email only for new sign-ups
+                await sendWelcomeEmail(userCredential.user.email)
+            }
         } catch (error) {
             console.error('Auth error:', error)
         }
@@ -175,7 +186,7 @@ export function Settings() {
                 <div className="w-full h-[1px] bg-neutral-200" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="font-medium">🏆 2026 Super Bowl pick</label>
+                    <label className="font-medium">25/26 <i>🏆</i> Super Bowl pick</label>
                     {selectedTeam && (
                         <div
                             className="w-full flex flex-col items-center justify-center"
@@ -200,15 +211,15 @@ export function Settings() {
                         value={selectedTeam}
                         onChange={handleTeamSelect}
                         disabled={isSaving}
-                        className="w-full p-4 marker text-center sm:text-2xl text-xl border-none focus:outline focus:outline-black focus:outline-4"
+                        className="w-full p-4 marker text-center sm:text-2xl text-xl border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
                     >
                         <option value="">Select a team</option>
-                        {teams.map(team => (
+                        {NFL_TEAMS.map(team => (
                             <option key={team} value={team}>{team}</option>
                         ))}
                     </select>
                     {isSaving && <span className="text-sm text-neutral-500">Saving...</span>}
-                    <span className="uppercase text-base text-neutral-500">🔒 Deadline: Sep 24, 2025, 9:00 AM PST</span>
+                    <span className="uppercase text-base text-neutral-500"><i>🔒</i> Deadline: Sep 5, 2025, 9:00 AM PST</span>
                 </div>
 
                 {/* Divider */}
@@ -220,7 +231,7 @@ export function Settings() {
                         id="emailOptOut"
                         checked={emailOptOut}
                         onChange={(e) => setEmailOptOut(e.target.checked)}
-                        className="h-6 w-6 bg-transparent border-2 text-black accent-black"
+                        className="h-6 w-6 bg-transparent border-2 text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
                     />
                     <label htmlFor="emailOptOut" className="inline">Get reminder emails</label>
                 </div>
@@ -254,7 +265,7 @@ export function Settings() {
             flex items-center justify-center marker
             lg:text-5xl text-4xl
             ">
-                👋 Hiya
+                Hiya!
             </div>
 
 
@@ -264,14 +275,14 @@ export function Settings() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                    className="p-4 border-none focus:outline focus:outline-black focus:outline-4 text-center chakra text-xl"
+                    className="p-4 border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2 text-center chakra text-xl"
                 />
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="p-4 border-none focus:outline focus:outline-black focus:outline-4 text-center chakra text-xl"
+                    className="p-4 border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2 text-center chakra text-xl"
                 />
                 <button
                     type="submit"

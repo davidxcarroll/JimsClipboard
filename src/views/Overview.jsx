@@ -38,13 +38,11 @@ export function Overview() {
                 flex flex-row items-center justify-center my-2
                 lg:mx-8 mx-2
                 lg:p-8 p-6
-                chakra uppercase text-white
-                cursor-pointer bg-orange-600 hover:bg-orange-500
-                shadow-md hover:shadow-xl
-                transition
+                chakra uppercase
+                cursor-pointer bg-amber-400
                 lg:text-3xl md:text-2xl text-xl
                 ">
-                    Pick Week {currentWeek}
+                    <i className="mr-2">👉</i> Pick Week {currentWeek} <i className="ml-2">👈</i>
                 </NavLink>
             )}
 
