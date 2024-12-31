@@ -8,6 +8,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import emailjs from '@emailjs/browser'
 import { NFL_TEAMS } from '../store/nfl/teams'
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 
 export function Settings() {
     const navigate = useNavigate()
@@ -115,7 +116,7 @@ export function Settings() {
     const handleAuth = async (e) => {
         e.preventDefault()
 
-        const promise = isSignUp 
+        const promise = isSignUp
             ? createUserWithEmailAndPassword(auth, email, password)
             : signInWithEmailAndPassword(auth, email, password)
 
@@ -138,7 +139,7 @@ export function Settings() {
 
     const handleLogout = async () => {
         setSelectedTeam('')
-        
+
         const promise = signOut(auth)
 
         toast.promise(promise, {
@@ -154,6 +155,24 @@ export function Settings() {
             setIsSignUp(false)
         } catch (error) {
             console.error('Logout error:', error)
+        }
+    }
+
+    const handleGoogleSignIn = async () => {
+        const provider = new GoogleAuthProvider()
+
+        try {
+            const promise = signInWithPopup(auth, provider)
+
+            toast.promise(promise, {
+                loading: 'Signing in with Google...',
+                success: 'Signed in successfully!',
+                error: (err) => `Error: ${err.message}`
+            })
+
+            await promise
+        } catch (error) {
+            console.error('Google Sign-in Error:', error)
         }
     }
 
@@ -268,7 +287,6 @@ export function Settings() {
                 Hiya!
             </div>
 
-
             <form onSubmit={handleAuth} className="flex flex-col gap-4 max-w-xl mx-auto w-full px-4 chakra">
                 <input
                     type="email"
@@ -286,13 +304,30 @@ export function Settings() {
                 />
                 <button
                     type="submit"
-                    className="
-                flex items-center justify-center py-4 px-8 bg-black cursor-pointer
-                uppercase text-white
-                lg:text-3xl md:text-2xl sm:text-xl text-lg
-                ">
+                    className="flex items-center justify-center py-4 px-8 bg-black cursor-pointer uppercase text-white lg:text-3xl md:text-2xl sm:text-xl text-lg"
+                >
                     {isSignUp ? 'Sign Up' : 'Sign In'}
                 </button>
+
+                <div className="flex items-center gap-4 my-4">
+                    <div className="flex-1 h-px bg-neutral-200"></div>
+                    <span className="text-neutral-500">or</span>
+                    <div className="flex-1 h-px bg-neutral-200"></div>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    className="flex items-center justify-center gap-3 py-4 px-8 border border-neutral-200 hover:border-black transition-colors"
+                >
+                    <img
+                        src="https://www.google.com/favicon.ico"
+                        alt="Google"
+                        className="w-5 h-5"
+                    />
+                    Continue with Google
+                </button>
+
                 <button
                     type="button"
                     onClick={() => setIsSignUp(!isSignUp)}
@@ -301,6 +336,7 @@ export function Settings() {
                     {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
                 </button>
             </form>
+
         </div>
     )
 }
