@@ -2,12 +2,6 @@ import { useState, useRef } from 'react'
 import { getWeekSchedule } from '../data/schedule'
 import { ParticipantsHeader } from '../components/shared/ParticipantsHeader'
 import { MatchupRow } from '../components/shared/MatchupRow'
-import { CircleCheck01 } from '../components/circles/circleCheck01'
-import { CircleCheck02 } from '../components/circles/circleCheck02'
-import { CircleCheck03 } from '../components/circles/circleCheck03'
-import { CircleTeamSm } from '../components/circles/circleTeamSm'
-import { CircleTeamMd } from '../components/circles/circleTeamMd'
-import { CircleTeamLg } from '../components/circles/circleTeamLg'
 import clipImage from '../assets/clip-305.png'
 
 export function Overview() {
