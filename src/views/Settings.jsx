@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { auth } from '../config/firebase'
+import { auth, db } from '../config/firebase'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useTeamLogo } from '../hooks/useTeamLogo'
+import { useTeam } from '../hooks/useTeam'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
+import toast from 'react-hot-toast'
 
 export function Settings() {
     const navigate = useNavigate()
@@ -11,11 +13,69 @@ export function Settings() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isSignUp, setIsSignUp] = useState(false)
-    const [error, setError] = useState(null)
-    const [success, setSuccess] = useState(false)
     const [selectedTeam, setSelectedTeam] = useState('')
-    const [emailOptOut, setEmailOptOut] = useState(true)
-    const { logoUrl, loading: logoLoading } = useTeamLogo(selectedTeam)
+    const [emailOptOut, setEmailOptOut] = useState(false)
+    const { teamData, loading: teamLoading } = useTeam(selectedTeam)
+    const [isSaving, setIsSaving] = useState(false)
+
+    // Load existing pick when component mounts
+    useEffect(() => {
+        async function loadPick() {
+            if (!user) return
+
+            try {
+                const docRef = doc(db, 'superBowlPicks', '2026', 'users', user.uid)
+                const docSnap = await getDoc(docRef)
+
+                if (docSnap.exists()) {
+                    setSelectedTeam(docSnap.data().team)
+                }
+            } catch (err) {
+                console.error('Error loading pick:', err)
+            }
+        }
+
+        loadPick()
+    }, [user])
+
+    const handleTeamSelect = (e) => {
+        const team = e.target.value
+        setSelectedTeam(team)
+        if (team) {
+            savePick(team)
+        }
+    }
+
+    console.log('Team Data:', teamData)
+
+    if (loading) {
+        return <div className="flex justify-center items-center m-24 p-24 chakra text-xl">Loading...</div>
+    }
+
+    const savePick = async (team) => {
+        if (!user) return
+
+        setIsSaving(true)
+        const promise = setDoc(doc(db, 'superBowlPicks', '2026', 'users', user.uid), {
+            team,
+            timestamp: new Date().toISOString(),
+            email: user.email
+        })
+
+        toast.promise(promise, {
+            loading: 'Saving...',
+            success: 'Pick saved successfully!',
+            error: (err) => `Error: ${err.message}`
+        })
+
+        try {
+            await promise
+        } catch (err) {
+            console.error('Error saving pick:', err)
+        } finally {
+            setIsSaving(false)
+        }
+    }
 
     const teams = [
         "Arizona Cardinals", "Atlanta Falcons", "Baltimore Ravens", "Buffalo Bills",
@@ -30,40 +90,45 @@ export function Settings() {
 
     const handleAuth = async (e) => {
         e.preventDefault()
-        setError(null)
-        setSuccess(false)
+
+        const promise = isSignUp 
+            ? createUserWithEmailAndPassword(auth, email, password)
+            : signInWithEmailAndPassword(auth, email, password)
+
+        toast.promise(promise, {
+            loading: isSignUp ? 'Creating account...' : 'Signing in...',
+            success: isSignUp ? 'Account created successfully!' : 'Signed in successfully!',
+            error: (err) => `Error: ${err.message}`
+        })
 
         try {
-            if (isSignUp) {
-                await createUserWithEmailAndPassword(auth, email, password)
-                setSuccess('Account created successfully!')
-            } else {
-                await signInWithEmailAndPassword(auth, email, password)
-                setSuccess('Signed in successfully!')
-            }
+            await promise
         } catch (error) {
             console.error('Auth error:', error)
-            setError(error.message)
         }
     }
 
     const handleLogout = async () => {
+        const promise = signOut(auth)
+
+        toast.promise(promise, {
+            loading: 'Signing out...',
+            success: 'Signed out successfully!',
+            error: (err) => `Error: ${err.message}`
+        })
+
         try {
-            await signOut(auth)
-            // Clear form fields after logout
+            await promise
             setEmail('')
             setPassword('')
-            setError(null)
-            setSuccess(false)
             setIsSignUp(false)
         } catch (error) {
             console.error('Logout error:', error)
-            setError(error.message)
         }
     }
 
     if (loading) {
-        return <div className="flex justify-center items-center pt-20">Loading...</div>
+        return <div className="flex justify-center items-center m-24 p-24 chakra text-xl">Loading...</div>
     }
 
     if (user) {
@@ -82,11 +147,35 @@ export function Settings() {
                     Settings
                 </div>
 
+                {/* Divider */}
+                <div className="w-full h-[1px] bg-neutral-200" />
+
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="font-medium">2026 Super Bowl pick</label>
+                    <label className="font-medium">🏆 2026 Super Bowl pick</label>
+                    {selectedTeam && (
+                        <div
+                            className="w-full flex flex-col items-center justify-center"
+                            style={{
+                                backgroundColor: teamData?.colors?.secondary ? `#${teamData.colors.secondary}` : 'rgb(255 255 255)',
+                            }}
+                        >
+                            {loading ? (
+                                <div className="h-32 w-32 animate-pulse bg-gray-200 rounded-full" />
+                            ) : (
+                                teamData?.logo && (
+                                    <img
+                                        src={teamData.logo}
+                                        alt={teamData.name}
+                                        className="h-32 w-32 object-contain"
+                                    />
+                                )
+                            )}
+                        </div>
+                    )}
                     <select
                         value={selectedTeam}
-                        onChange={(e) => setSelectedTeam(e.target.value)}
+                        onChange={handleTeamSelect}
+                        disabled={isSaving}
                         className="w-full p-4 marker text-center sm:text-2xl text-xl border-none focus:outline focus:outline-black focus:outline-4"
                     >
                         <option value="">Select a team</option>
@@ -94,20 +183,8 @@ export function Settings() {
                             <option key={team} value={team}>{team}</option>
                         ))}
                     </select>
-                    {selectedTeam && (
-                        <div className="mt-4">
-                            {logoLoading ? (
-                                <div className="h-24 w-24 animate-pulse bg-gray-200 rounded-full" />
-                            ) : (
-                                logoUrl && <img
-                                    src={logoUrl}
-                                    alt={selectedTeam}
-                                    className="h-24 w-24 object-contain"
-                                />
-                            )}
-                        </div>
-                    )}
-                    <span className="uppercase text-base opacity-50">Deadline: Sep 24, 2025</span>
+                    {isSaving && <span className="text-sm text-neutral-500">Saving...</span>}
+                    <span className="uppercase text-base text-neutral-500">🔒 Deadline: Sep 24, 2025, 9:00 AM PST</span>
                 </div>
 
                 {/* Divider */}
@@ -158,16 +235,6 @@ export function Settings() {
 
 
             <form onSubmit={handleAuth} className="flex flex-col gap-4 max-w-xl mx-auto w-full px-4 chakra">
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                        {error}
-                    </div>
-                )}
-                {success && (
-                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                        {success}
-                    </div>
-                )}
                 <input
                     type="email"
                     value={email}
