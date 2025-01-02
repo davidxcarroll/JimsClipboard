@@ -145,34 +145,20 @@ export function Overview() {
 
             <ParticipantsHeader />
 
-            {sortedDateGroups.map((dateGroup, index) => (
-                <div className="flex flex-col lg:gap-12 gap-8" key={index}>
-                    {/* Date Header */}
-                    <div className="
-                    flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
-                    md:px-8 px-2 py-2
-                    uppercase lg:text-xl md:text-lg text-base text-neutral-400
-                    ">
-                        {dateGroup.day}  {/* This will now show the correct day */}
-                    </div>
-
-                    {/* Games for this date */}
-                    {sortedDateGroups.map(group => (
-                        <div key={group.date}>
-                            <h2>{group.day}</h2>
-                            {group.games.map(game => (
-                                <MatchupRow
-                                    key={game.id}
-                                    gameId={game.id}
-                                    homeTeam={game.homeTeam}
-                                    awayTeam={game.awayTeam}
-                                    week={currentWeek.number}
-                                    winningTeam={game.winningTeam}
-                                    picks={game.picks}
-                                    users={users}  // Pass users as prop
-                                />
-                            ))}
-                        </div>
+            {sortedDateGroups.map(group => (
+                <div key={group.date}>
+                    <h2>{group.day}</h2>
+                    {group.games.map(game => (
+                        <MatchupRow
+                            key={game.id}
+                            gameId={game.id}
+                            homeTeam={game.homeTeam}
+                            awayTeam={game.awayTeam}
+                            week={currentWeek.number}
+                            winningTeam={game.winningTeam}
+                            picks={game.picks}
+                            users={users}  // Pass users as prop
+                        />
                     ))}
                 </div>
             ))}

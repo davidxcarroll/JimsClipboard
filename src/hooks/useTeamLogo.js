@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { espnApi } from '../services/espn/api'
 
 export function useTeamLogo(teamName) {
     const [logoUrl, setLogoUrl] = useState(null)
+    const [teamColors, setTeamColors] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
@@ -13,20 +15,30 @@ export function useTeamLogo(teamName) {
 
         const fetchLogo = async () => {
             try {
-                // ESPN API endpoint for NFL teams
-                const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`)
-                const data = await response.json()
-                
-                // Find the team in the response
+                const data = await espnApi.get('/teams')
+
                 const team = data.sports[0].leagues[0].teams.find(
-                    t => t.team.name.toLowerCase() === teamName.toLowerCase()
+                    t => t.team.displayName.toLowerCase() === teamName.toLowerCase()
                 )
 
-                if (team) {
-                    setLogoUrl(team.team.logos[0].href)
+                if (team && team.team) {
+                    if (team.team.logos) {
+                        const defaultLogo = team.team.logos.find(logo =>
+                            logo.rel.includes('default')
+                        )
+                        if (defaultLogo) {
+                            setLogoUrl(defaultLogo.href)
+                        }
+                    }
+                    
+                    // Set team colors
+                    setTeamColors({
+                        primary: `#${team.team.color}`,
+                        alternate: `#${team.team.alternateColor}`
+                    })
                 }
             } catch (err) {
-                console.error('Error fetching team logo:', err)
+
                 setError(err)
             } finally {
                 setLoading(false)
@@ -36,5 +48,5 @@ export function useTeamLogo(teamName) {
         fetchLogo()
     }, [teamName])
 
-    return { logoUrl, loading, error }
+    return { logoUrl, teamColors, loading, error }
 }

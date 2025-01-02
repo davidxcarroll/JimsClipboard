@@ -8,7 +8,10 @@ import { doc, setDoc, getDoc } from 'firebase/firestore'
 import toast from 'react-hot-toast'
 import emailjs from '@emailjs/browser'
 import { NFL_TEAMS } from '../store/nfl/teams'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { signInWithGoogle } from '../hooks/useAuth';
+import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth'
+import { useTeamLogo } from '../hooks/useTeamLogo'
+import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
 
 export function Settings() {
     const navigate = useNavigate()
@@ -18,47 +21,87 @@ export function Settings() {
     const [isSignUp, setIsSignUp] = useState(false)
     const [selectedTeam, setSelectedTeam] = useState('')
     const [emailOptOut, setEmailOptOut] = useState(false)
-    const { teamData, loading: teamLoading } = useTeam(selectedTeam)
+    const [name, setName] = useState('')
+    const { logoUrl, teamColors, loading: teamLoading } = useTeamLogo(selectedTeam)
     const [isSaving, setIsSaving] = useState(false)
+    const [initialName, setInitialName] = useState('')
+    const [initialTeam, setInitialTeam] = useState('')
+    const [initialEmailOptOut, setInitialEmailOptOut] = useState(false)
+    const [timeZone, setTimeZone] = useState('PST')
+    const [initialTimeZone, setInitialTimeZone] = useState('PST')
 
-    // Load existing pick when component mounts
+    const getFirstName = (fullName) => {
+        if (!fullName) return '';
+        return fullName.split(' ')[0];
+    };
+
+    // Load existing data when component mounts
     useEffect(() => {
-        let isMounted = true  // For cleanup
+        let isMounted = true
 
-        async function loadPick() {
-            // Clear the selected team when there's no user
+        async function loadUserData() {
             if (!user) {
-                setSelectedTeam('')
-                return
+                // Reset all states
+                setSelectedTeam('');
+                setName('');
+                setInitialTeam('');
+                setInitialName('');
+                setEmailOptOut(false);
+                setInitialEmailOptOut(false);
+                setTimeZone('PST');
+                setInitialTimeZone('PST');
+                return;
             }
 
             try {
-                const docRef = doc(db, 'superBowlPicks', '2026', 'users', user.uid)
-                const docSnap = await getDoc(docRef)
+                const userRef = doc(db, 'users', user.uid);
+                const docSnap = await getDoc(userRef);
 
-                // Only set state if component is still mounted
-                if (isMounted) {
-                    if (docSnap.exists()) {
-                        setSelectedTeam(docSnap.data().team)
-                    } else {
-                        setSelectedTeam('')
-                    }
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const currentYear = '2026';
+                    const superBowlPick = data.picks?.[currentYear]?.superBowl?.team || '';
+
+                    setSelectedTeam(superBowlPick);
+                    setName(data.name || getFirstName(user.displayName) || '');
+                    setEmailOptOut(data.emailOptOut || false);
+                    setTimeZone(data.timeZone || 'PST');
+
+                    // Set initial values
+                    setInitialTeam(superBowlPick);
+                    setInitialName(data.name || getFirstName(user.displayName) || '');
+                    setInitialEmailOptOut(data.emailOptOut || false);
+                    setInitialTimeZone(data.timeZone || 'PST');
+                } else {
+                    // Set defaults for new users
+                    const defaultName = getFirstName(user.displayName) || '';
+                    setSelectedTeam('');
+                    setName(defaultName);
+                    setEmailOptOut(false);
+                    setTimeZone('PST');
+
+                    // Set initial values
+                    setInitialTeam('');
+                    setInitialName(defaultName);
+                    setInitialEmailOptOut(false);
+                    setInitialTimeZone('PST');
                 }
             } catch (err) {
-                console.error('Error loading pick:', err)
-                if (isMounted) {
-                    setSelectedTeam('')
-                }
+                console.error('Error loading user data:', err);
             }
         }
 
-        loadPick()
+        loadUserData()
 
         return () => {
             isMounted = false
-            setSelectedTeam('')  // Clear selection when component unmounts
         }
     }, [user])
+
+    // Handle name change
+    const handleNameChange = (e) => {
+        setName(e.target.value)
+    }
 
     const handleTeamSelect = (e) => {
         const team = e.target.value
@@ -69,33 +112,70 @@ export function Settings() {
     }
 
     if (loading) {
-        return <div className="flex justify-center items-center m-24 p-24 chakra text-xl">Loading...</div>
+        return <div className="w-fit flex justify-center items-center self-center mt-12 chakra text-xl px-2 text-white bg-black">Loading...</div>
     }
 
     const savePick = async (team) => {
-        if (!user) return
-
-        setIsSaving(true)
-        const promise = setDoc(doc(db, 'superBowlPicks', '2026', 'users', user.uid), {
-            team,
-            timestamp: new Date().toISOString(),
-            email: user.email
-        })
-
-        toast.promise(promise, {
-            loading: 'Saving...',
-            success: 'Pick saved successfully!',
-            error: (err) => `Error: ${err.message}`
-        })
-
+        if (!user) return;
+    
+        setIsSaving(true);
+        const currentYear = '2026';
+    
         try {
-            await promise
+            const userRef = doc(db, 'users', user.uid);
+            
+            // First get the current user data
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.exists() ? userSnap.data() : {};
+            
+            // Prepare the update object maintaining existing picks
+            const updatedData = {
+                ...userData,
+                name,
+                email: user.email,
+                emailOptOut,
+                timeZone,
+                updatedAt: new Date().toISOString(),
+                picks: {
+                    ...userData.picks,
+                    [currentYear]: {
+                        ...userData.picks?.[currentYear],
+                        superBowl: {
+                            team,
+                            updatedAt: new Date().toISOString()
+                        }
+                    }
+                }
+            };
+    
+            const promise = setDoc(userRef, updatedData);
+    
+            toast.promise(promise, {
+                loading: 'Saving...',
+                success: 'Settings saved successfully!',
+                error: 'Error saving settings'
+            });
+    
+            await promise;
+    
+            // Update initial values after successful save
+            setInitialTeam(team);
+            setInitialName(name);
+            setInitialEmailOptOut(emailOptOut);
+            setInitialTimeZone(timeZone);
         } catch (err) {
-            console.error('Error saving pick:', err)
+            console.error('Error saving settings:', err);
         } finally {
-            setIsSaving(false)
+            setIsSaving(false);
         }
-    }
+    };
+
+    // Update the condition for showing the save button
+    const hasUnsavedChanges =
+        name !== initialName ||
+        selectedTeam !== initialTeam ||
+        emailOptOut !== initialEmailOptOut ||
+        timeZone !== initialTimeZone
 
     const sendWelcomeEmail = async (userEmail) => {
         try {
@@ -116,6 +196,18 @@ export function Settings() {
     const handleAuth = async (e) => {
         e.preventDefault()
 
+        // Validate inputs
+        if (!email || !password) {
+            toast.error('Please enter both email and password');
+            return;
+        }
+
+        // Validate password length for sign up
+        if (isSignUp && password.length < 6) {
+            toast.error('Password must be at least 6 characters');
+            return;
+        }
+
         const promise = isSignUp
             ? createUserWithEmailAndPassword(auth, email, password)
             : signInWithEmailAndPassword(auth, email, password)
@@ -123,13 +215,26 @@ export function Settings() {
         toast.promise(promise, {
             loading: isSignUp ? 'Creating account...' : 'Signing in...',
             success: isSignUp ? 'Account created successfully!' : 'Signed in successfully!',
-            error: (err) => `Error: ${err.message}`
+            error: (err) => {
+                // Provide more user-friendly error messages
+                switch (err.code) {
+                    case 'auth/user-not-found':
+                        return 'No account found with this email';
+                    case 'auth/wrong-password':
+                        return 'Incorrect password';
+                    case 'auth/invalid-email':
+                        return 'Invalid email address';
+                    case 'auth/email-already-in-use':
+                        return 'Email already registered';
+                    default:
+                        return `Error: ${err.message}`;
+                }
+            }
         })
 
         try {
             const userCredential = await promise
             if (isSignUp) {
-                // Send welcome email only for new sign-ups
                 await sendWelcomeEmail(userCredential.user.email)
             }
         } catch (error) {
@@ -159,25 +264,35 @@ export function Settings() {
     }
 
     const handleGoogleSignIn = async () => {
-        const provider = new GoogleAuthProvider()
+        try {
+            await signInWithGoogle();
+            // The redirect will happen automatically
+            // The result will be handled in useAuth
+        } catch (error) {
+            console.error('Google Sign-in Error:', error);
+        }
+    };
+
+    const handleYahooSignIn = async () => {
+        const provider = new OAuthProvider('yahoo.com')
 
         try {
             const promise = signInWithPopup(auth, provider)
 
             toast.promise(promise, {
-                loading: 'Signing in with Google...',
+                loading: 'Signing in with Yahoo...',
                 success: 'Signed in successfully!',
                 error: (err) => `Error: ${err.message}`
             })
 
             await promise
         } catch (error) {
-            console.error('Google Sign-in Error:', error)
+            console.error('Yahoo Sign-in Error:', error)
         }
     }
 
     if (loading) {
-        return <div className="flex justify-center items-center m-24 p-24 chakra text-xl">Loading...</div>
+        return <div className="flex justify-center items-center m-24 p-24 chakra text-xl px-2 text-white bg-black">Loading...</div>
     }
 
     if (user) {
@@ -201,6 +316,17 @@ export function Settings() {
                     </div>
                 </div>
 
+                <div className="max-w-xl mx-auto w-full flex flex-col items-center justify-center gap-2">
+                    <div className="uppercase text-base text-neutral-500">Name</div>
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={handleNameChange}
+                        placeholder="Name"
+                        className="w-full p-4 border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2 text-center chakra text-xl"
+                    />
+                </div>
+
                 {/* Divider */}
                 <div className="w-full h-[1px] bg-neutral-200" />
 
@@ -209,20 +335,24 @@ export function Settings() {
                     {selectedTeam && (
                         <div
                             className="w-full flex flex-col items-center justify-center"
-                            style={{
-                                backgroundColor: teamData?.colors?.secondary ? `#${teamData.colors.secondary}` : 'rgb(255 255 255)',
-                            }}
                         >
-                            {loading ? (
-                                <div className="h-32 w-32 animate-pulse bg-gray-200 rounded-full" />
-                            ) : (
-                                teamData?.logo && (
+                            {teamLoading ? (
+                                <div className="h-32 w-32 animate-pulse bg-white" />
+                            ) : logoUrl ? (
+                                <div
+                                    className="w-full flex items-center justify-center"
+                                    style={{
+                                        backgroundColor: teamColors?.alternate || 'bg-white'
+                                    }}
+                                >
                                     <img
-                                        src={teamData.logo}
-                                        alt={teamData.name}
+                                        src={logoUrl}
+                                        alt={selectedTeam}
                                         className="h-32 w-32 object-contain"
                                     />
-                                )
+                                </div>
+                            ) : (
+                                <div>No logo found</div>
                             )}
                         </div>
                     )}
@@ -238,7 +368,25 @@ export function Settings() {
                         ))}
                     </select>
                     {isSaving && <span className="text-sm text-neutral-500">Saving...</span>}
-                    <span className="uppercase text-base text-neutral-500"><i>🔒</i> Deadline: Sep 5, 2025, 9:00 AM PST</span>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full h-[1px] bg-neutral-200" />
+
+                <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
+                    <label className="font-medium">Time <i>🌐</i> Zone</label>
+                    <select
+                        value={timeZone}
+                        onChange={(e) => setTimeZone(e.target.value)}
+                        className="w-full p-4 marker text-center sm:text-2xl text-xl border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
+                    >
+                        <option value="America/Los_Angeles">Pacific (PT)</option>
+                        <option value="America/Denver">Mountain (MT)</option>
+                        <option value="America/Chicago">Central (CT)</option>
+                        <option value="America/New_York">Eastern (ET)</option>
+                        <option value="America/Anchorage">Alaska (AKT)</option>
+                        <option value="Pacific/Honolulu">Hawaii (HT)</option>
+                    </select>
                 </div>
 
                 {/* Divider */}
@@ -257,6 +405,22 @@ export function Settings() {
 
                 {/* Divider */}
                 <div className="w-full h-[1px] bg-neutral-200" />
+
+                {/* Save Button - only show if there are unsaved changes */}
+                {hasUnsavedChanges && (
+                    <div className="group flex flex-col gap-8 items-center justify-center sticky bottom-0 z-50">
+                        <div
+                            onClick={() => savePick(selectedTeam)}
+                            className="
+                            flex items-center justify-center py-4 px-8 bg-black group-hover:bg-neutral-900 cursor-pointer
+                            chakra uppercase text-white
+                            lg:text-3xl md:text-2xl sm:text-xl text-lg
+                        "
+                        >
+                            Save
+                        </div>
+                    </div>
+                )}
 
                 <div className="flex items-center justify-center">
                     <button
@@ -288,11 +452,13 @@ export function Settings() {
             </div>
 
             <form onSubmit={handleAuth} className="flex flex-col gap-4 max-w-xl mx-auto w-full px-4 chakra">
+
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
+                    required
                     className="p-4 border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2 text-center chakra text-xl"
                 />
                 <input
@@ -300,6 +466,8 @@ export function Settings() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
+                    required
+                    minLength={6}
                     className="p-4 border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2 text-center chakra text-xl"
                 />
                 <button
@@ -309,16 +477,16 @@ export function Settings() {
                     {isSignUp ? 'Sign Up' : 'Sign In'}
                 </button>
 
-                <div className="flex items-center gap-4 my-4">
+                {/* <div className="flex items-center gap-4 my-4">
                     <div className="flex-1 h-px bg-neutral-200"></div>
                     <span className="text-neutral-500">or</span>
                     <div className="flex-1 h-px bg-neutral-200"></div>
-                </div>
+                </div> */}
 
-                <button
+                {/* <button
                     type="button"
                     onClick={handleGoogleSignIn}
-                    className="flex items-center justify-center gap-3 py-4 px-8 border border-neutral-200 hover:border-black transition-colors"
+                    className="flex items-center justify-center gap-3 py-4 px-8 border border-neutral-200 hover:border-black"
                 >
                     <img
                         src="https://www.google.com/favicon.ico"
@@ -326,7 +494,20 @@ export function Settings() {
                         className="w-5 h-5"
                     />
                     Continue with Google
-                </button>
+                </button> */}
+
+                {/* <button
+                    type="button"
+                    onClick={handleYahooSignIn}
+                    className="flex items-center justify-center gap-3 py-4 px-8 border border-neutral-200 hover:border-black"
+                >
+                    <img
+                        src="https://www.yahoo.com/favicon.ico"
+                        alt="Google"
+                        className="w-5 h-5"
+                    />
+                    Continue with Yahoo
+                </button> */}
 
                 <button
                     type="button"
@@ -335,6 +516,7 @@ export function Settings() {
                 >
                     {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
                 </button>
+
             </form>
 
         </div>

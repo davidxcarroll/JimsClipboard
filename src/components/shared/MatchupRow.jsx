@@ -1,3 +1,6 @@
+import React from 'react';
+import { getDisplayName, getEspnAbbreviation } from '../../utils/teamMapping';
+
 import { CircleCheck01 } from '../circles/circleCheck01'
 import { CircleCheck02 } from '../circles/circleCheck02'
 import { CircleCheck03 } from '../circles/circleCheck03'
@@ -5,10 +8,24 @@ import { CircleTeamSm } from '../circles/circleTeamSm'
 import { CircleTeamMd } from '../circles/circleTeamMd'
 import { CircleTeamLg } from '../circles/circleTeamLg'
 
-export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
+export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, picks, users }) {
+
   // Helper to check if participant picked this team
   const didPickTeam = (team, participant) => {
-    return picks?.[participant] === team
+    const espnAbbrev = getEspnAbbreviation(team);
+    const hasPick = picks?.[participant] === espnAbbrev;
+
+    console.log('🎯 Checking pick in MatchupRow:', {
+      gameId,
+      team,
+      participant,
+      espnAbbrev,
+      picks,
+      participantPick: picks?.[participant],
+      hasPick
+    });
+
+    return hasPick;
   }
 
   // Helper to check if pick was correct
@@ -31,18 +48,19 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
   }
 
   const renderTeamName = (team, isWinner) => {
-    const TeamCircle = getTeamCircle(team)
+    const displayName = getDisplayName(team);
+    const TeamCircle = getTeamCircle(displayName);
     return (
       <span className="relative inline-block">
         {isWinner && week === 1 && <TeamCircle />}
-        {team}
+        {displayName}
       </span>
     )
   }
 
   const renderCheckmark = (team, participant) => {
     if (week === 3) return null
-    
+
     const picked = didPickTeam(team, participant)
     if (!picked) return null
 
@@ -66,6 +84,8 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
     )
   }
 
+  console.log('MatchupRow render:', { gameId, homeTeam, awayTeam, week, winningTeam, picks, users });
+
   return (
     <div className="flex flex-col marker lg:text-3xl md:text-2xl text-xl">
       {/* Home Team Row */}
@@ -73,22 +93,15 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
         <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
           {renderTeamName(homeTeam, winningTeam === homeTeam)}
         </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(homeTeam, 'jim')}
-        </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(homeTeam, 'monty')}
-        </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(homeTeam, 'dan')}
-        </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(homeTeam, 'david')}
-        </div>
+
+        {users.map((user, index) => (
+          <React.Fragment key={user.id}>
+            <div className="w-[1.5px] bg-neutral-200" />
+            <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
+              {renderCheckmark(homeTeam, user.id)}
+            </div>
+          </React.Fragment>
+        ))}
       </div>
 
       {/* Divider */}
@@ -99,23 +112,18 @@ export function MatchupRow({ homeTeam, awayTeam, week, winningTeam, picks }) {
         <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
           {renderTeamName(awayTeam, winningTeam === awayTeam)}
         </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(awayTeam, 'jim')}
-        </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(awayTeam, 'monty')}
-        </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(awayTeam, 'dan')}
-        </div>
-        <div className="w-[1.5px] bg-neutral-200" />
-        <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
-          {renderCheckmark(awayTeam, 'david')}
-        </div>
+
+        {users.map((user, index) => (
+          <React.Fragment key={user.id}>
+            <div className="w-[1.5px] bg-neutral-200" />
+            <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
+              {renderCheckmark(awayTeam, user.id)}
+            </div>
+          </React.Fragment>
+        ))}
       </div>
     </div>
   )
 }
+
+export default MatchupRow;

@@ -7,12 +7,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from './config/firebase'
+import { SettingsProvider } from './contexts/SettingsContext'
 
 function App() {
   const [user] = useAuthState(auth)
 
   return (
-    <>
+    <SettingsProvider>
       <Toaster
         position="bottom-left"
         toastOptions={{
@@ -41,7 +42,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-    </>
+    </SettingsProvider>
   )
 }
 

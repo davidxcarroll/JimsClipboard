@@ -1,46 +1,30 @@
 import { useState, useEffect } from 'react'
-import { teamService } from '../services/espn/teams'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { db, auth } from '../config/firebase'
 
-export function useTeam(teamName) {
-    const [teamData, setTeamData] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
+export function useTeam() {
+    const [team, setTeam] = useState(null)
+    const [user] = useAuthState(auth)
 
     useEffect(() => {
-        if (!teamName) {
-            setLoading(false)
-            return
-        }
+        if (!user) return
 
-        async function fetchTeamData() {
-            try {
-                const teams = await teamService.getAllTeams()
-                
-                const team = teams.find(t => t.team.displayName === teamName)
-                if (team) {
-                    console.log('Found team:', team)
-                    setTeamData({
-                        name: team.team.displayName,
-                        logo: team.team.logos?.[0]?.href,
-                        abbreviation: team.team.abbreviation,
-                        colors: {
-                            primary: team.team.color,
-                            secondary: team.team.alternateColor
-                        }
-                    })
-                } else {
-                    console.log('No team found for:', teamName)
-                }
-            } catch (err) {
-                console.error('Error fetching team data:', err)
-                setError(err)
-            } finally {
-                setLoading(false)
+        const userRef = doc(db, 'users', user.uid)
+        getDoc(userRef).then(docSnap => {
+            if (docSnap.exists()) {
+                setTeam(docSnap.data())
             }
-        }
+        })
+    }, [user])
 
-        fetchTeamData()
-    }, [teamName])
+    const updateTeam = async (updatedData) => {
+        if (!user) return
 
-    return { teamData, loading, error }
+        const userRef = doc(db, 'users', user.uid)
+        await setDoc(userRef, updatedData, { merge: true })
+        setTeam(updatedData)
+    }
+
+    return { team, updateTeam }
 }
