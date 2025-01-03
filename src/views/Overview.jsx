@@ -17,6 +17,52 @@ export function Overview() {
     const location = useLocation()
 
     useEffect(() => {
+        const testAPI = async () => {
+            try {
+                console.log('🧪 Starting ESPN API Test...\n');
+                
+                // Test 1: Get Current Week
+                const week = await scheduleService.getCurrentWeek();
+                console.log('📅 Current Week:', {
+                    number: week?.number,
+                    type: week?.type
+                });
+                
+                if (week?.number) {
+                    // Test 2: Get Games
+                    const games = await scheduleService.getWeekGames(week.number);
+                    console.log(`\n🏈 Found ${games.length} games for Week ${week.number}`);
+                    
+                    // Test 3: Game Details
+                    games.forEach(game => {
+                        console.log('\n-------------------');
+                        console.log(`${game.awayTeam} @ ${game.homeTeam}`);
+                        console.log(`Status: ${game.status}`);
+                        console.log(`Score: ${game.awayTeam} ${game.score.away} - ${game.score.home} ${game.homeTeam}`);
+                        console.log(`Winner: ${game.winner || 'Not finished'}`);
+                        console.log(`Date: ${new Date(game.utcDate).toLocaleString()}`);
+                    });
+    
+                    // Test 4: Game States
+                    const gameStates = games.reduce((acc, game) => {
+                        acc[game.status] = (acc[game.status] || 0) + 1;
+                        return acc;
+                    }, {});
+                    console.log('\n📊 Game States:', gameStates);
+    
+                    // Test 5: Winners Check
+                    const gamesWithWinners = games.filter(g => g.winner);
+                    console.log('\n🏆 Games with Winners:', gamesWithWinners.length);
+                }
+            } catch (error) {
+                console.error('❌ API Test Error:', error);
+            }
+        };
+    
+        testAPI();
+    }, []); // Run once on component mount
+
+    useEffect(() => {
         if (location.state?.refreshData) {
             setLoading(true) // Force loading state
             loadData()  // Your existing data loading function
@@ -25,25 +71,34 @@ export function Overview() {
 
     const processGamesWithPicks = (games) => {
         if (!users || !currentWeek?.number) return games;
-
+    
         return games.map(game => {
-            // Create a picks object for this game
             const gamePicks = {};
+            let correctPicks = 0;
+            let totalPicks = 0;
+    
             users.forEach(user => {
-                // Changed from user.data?.picks to user.picks
                 const userPicks = user.picks?.[currentWeek.number];
                 if (userPicks) {
-                    // Store the pick for this game if it exists
                     const gamePick = userPicks[game.id];
                     if (gamePick) {
                         gamePicks[user.id] = gamePick;
+                        totalPicks++;
+                        // Check if pick was correct (only for completed games)
+                        if (game.status === 'post' && game.winner === gamePick) {
+                            correctPicks++;
+                        }
                     }
                 }
             });
-
+    
             return {
                 ...game,
-                picks: gamePicks
+                picks: gamePicks,
+                pickStats: {
+                    total: totalPicks,
+                    correct: correctPicks
+                }
             };
         });
     };

@@ -8,7 +8,28 @@ import { CircleTeamSm } from '../circles/circleTeamSm'
 import { CircleTeamMd } from '../circles/circleTeamMd'
 import { CircleTeamLg } from '../circles/circleTeamLg'
 
-export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, picks, users }) {
+const ENABLE_MOCKS = import.meta.env.VITE_ENABLE_MOCKS === 'true';
+
+export const MatchupRow = React.memo(function MatchupRow({
+  gameId,
+  homeTeam,
+  awayTeam,
+  week,
+  winningTeam: actualWinningTeam,
+  picks,
+  users
+}) {
+  // Mock logic only runs if enabled
+  const MOCK_WINNER = ENABLE_MOCKS && gameId === '401671834' ? 'Browns' : undefined;
+  const winningTeam = MOCK_WINNER || actualWinningTeam;
+
+  console.log('🎯 Mock status:', {
+    ENABLE_MOCKS,
+    gameId,
+    MOCK_WINNER,
+    actualWinningTeam,
+    finalWinningTeam: winningTeam
+  });
 
   // Helper to check if participant picked this team
   const didPickTeam = (team, participant) => {
@@ -42,7 +63,7 @@ export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, pick
 
   // Helper to determine team name length and get appropriate circle
   const getTeamCircle = (teamName) => {
-    if (teamName.length <= 6) return CircleTeamSm
+    if (teamName.length <= 5) return CircleTeamSm
     if (teamName.length <= 9) return CircleTeamMd
     return CircleTeamLg
   }
@@ -52,7 +73,7 @@ export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, pick
     const TeamCircle = getTeamCircle(displayName);
     return (
       <span className="relative inline-block">
-        {isWinner && week === 1 && <TeamCircle />}
+        {isWinner && week === 18 && <TeamCircle />}
         {displayName}
       </span>
     )
@@ -65,7 +86,7 @@ export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, pick
     if (!picked) return null
 
     const isCorrect = isCorrectPick(team, participant)
-    const showCircle = isCorrect && week === 1 && team === winningTeam
+    const showCircle = isCorrect && week === 18 && team === winningTeam
 
     if (showCircle) {
       const CircleCheck = getRandomCircleCheck()
@@ -123,7 +144,5 @@ export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, pick
         ))}
       </div>
     </div>
-  )
-}
-
-export default MatchupRow;
+  );
+});

@@ -24,6 +24,25 @@ export class ScheduleService {
     }
   }
 
+  getGameStatus(competition) {
+    const status = competition.status?.type?.state || 'unknown';
+    const homeScore = parseInt(competition.competitors.find(c => c.homeAway === 'home')?.score) || 0;
+    const awayScore = parseInt(competition.competitors.find(c => c.homeAway === 'away')?.score) || 0;
+
+    // Determine winner if game is finished
+    let winner = null;
+    if (status === 'post') {
+      winner = homeScore > awayScore ? 'home' : 'away';
+    }
+
+    return {
+      state: status,
+      winner,
+      homeScore,
+      awayScore
+    };
+  }
+
   async getWeekGames(weekNumber, seasonType = 2) {
     try {
       const response = await espnApi.get(`/scoreboard`);
@@ -42,19 +61,23 @@ export class ScheduleService {
         const competition = event.competitions[0];
         const homeTeam = competition.competitors.find(c => c.homeAway === 'home');
         const awayTeam = competition.competitors.find(c => c.homeAway === 'away');
+        const gameStatus = this.getGameStatus(competition);
 
         return {
           id: event.id,
           utcDate: event.date,
-          status: this.getGameStatus(competition),
-          homeTeam: this.getTeamName(homeTeam.team.abbreviation),
-          awayTeam: this.getTeamName(awayTeam.team.abbreviation),
+          status: gameStatus.state,
+          homeTeam: homeTeam.team.abbreviation,
+          awayTeam: awayTeam.team.abbreviation,
           homeRecord: homeTeam.records?.[0]?.summary || '',
           awayRecord: awayTeam.records?.[0]?.summary || '',
-          score: competition.status.type.state !== 'pre' ? {
-            home: parseInt(homeTeam.score) || 0,
-            away: parseInt(awayTeam.score) || 0
-          } : null,
+          score: {
+            home: gameStatus.homeScore,
+            away: gameStatus.awayScore
+          },
+          winner: gameStatus.winner ?
+            (gameStatus.winner === 'home' ? homeTeam.team.abbreviation : awayTeam.team.abbreviation)
+            : null,
           venue: competition.venue?.fullName || '',
           broadcast: competition.broadcasts?.[0]?.names?.[0] || ''
         };
@@ -63,11 +86,6 @@ export class ScheduleService {
       console.error('Error getting week games:', error);
       return [];
     }
-  }
-
-  getGameStatus(competition) {
-    // Add your status logic here
-    return competition.status?.type?.state || 'unknown';
   }
 
   getTeamName(abbreviation) {
