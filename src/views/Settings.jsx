@@ -332,7 +332,7 @@ export function Settings() {
                 <div className="w-full h-[1px] bg-neutral-200" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="font-medium">25/26 <i>🏆</i> Super Bowl pick</label>
+                    <label className="flex flex-row items-center gap-1 font-medium">25/26 <span className="material-symbols-sharp">trophy</span> Super Bowl pick</label>
                     {selectedTeam && (
                         <div
                             className="w-full flex flex-col items-center justify-center"
@@ -375,7 +375,7 @@ export function Settings() {
                 <div className="w-full h-[1px] bg-neutral-200" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="font-medium">Time <i>🌐</i> Zone</label>
+                    <label className="flex flex-row items-center gap-1 font-medium">Time <span className="material-symbols-sharp">language</span> Zone</label>
                     <select
                         value={timeZone}
                         onChange={(e) => setTimeZone(e.target.value)}

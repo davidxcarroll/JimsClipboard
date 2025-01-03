@@ -182,20 +182,21 @@ export function Overview() {
             xl:pt-8 md:pt-28 sm:pt-24 xs:pt-20 pt-14
         ">
 
-            <div className="flex flex-row items-center xl:justify-between justify-center gap-2 lg:mx-8 mx-2 z-20">
+            <div className="flex flex-row items-center xl:justify-between sm:justify-center justify-evenly xs:gap-4 lg:mx-8 mx-2 z-20">
 
                 {picksStillAllowed && (
                     <NavLink
                         to="/picks"
                         className="
                 group
-                flex flex-row items-center justify-center
-                lg:py-2 py-2 lg:px-6 px-4
-                chakra uppercase
+                flex flex-row items-center justify-center gap-1
+                lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
+                chakra uppercase -rotate-2
                 bg-amber-300 hover:bg-yellow-300
                 lg:text-xl md:text-lg text-base
                 ">
-                        <i className="mr-2 max-xs:hidden">✔</i>
+                        {/* <i className="mr-2 max-xs:hidden">✔</i> */}
+                        <span className="material-symbols-sharp">checklist</span>
                         Pick Week {currentWeek?.number}
                     </NavLink>
                 )}
@@ -204,12 +205,14 @@ export function Overview() {
                     to="/settings"
                     className="
                     group
-                    flex flex-row items-center justify-center
-                    lg:py-2 py-2 px-4
+                    flex flex-row items-center justify-center gap-1
+                    lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
                     chakra uppercase opacity-50
                     lg:text-xl md:text-lg text-base
                     ">
-                    <i className="mr-1">⚙</i>Settings
+                    {/* <i className="mr-1">⚙</i> */}
+                    <span className="material-symbols-sharp">tune</span>
+                    Settings
                 </NavLink>
 
             </div>
