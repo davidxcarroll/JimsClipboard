@@ -178,7 +178,7 @@ export function Overview() {
 
     return (
         <div className="
-            flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-24
+            flex flex-col lg:gap-10 gap-6 bg-neutral-100 pb-24
             lg:pt-28 md:pt-24 sm:pt-20 xs:pt-16 pt-12
         ">
             {picksStillAllowed && (
@@ -201,6 +201,13 @@ export function Overview() {
             )}
 
             <ParticipantsHeader />
+
+            <div className="
+                md:px-8 px-2 chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400
+                lg:-mt-20 md:-mt-16 sm:-mt-14 xs:-mt-16 -mt-14
+            ">
+                Week 18
+            </div>
 
             {sortedDateGroups.map((dateGroup, index) => (
                 <div className="flex flex-col lg:gap-8 gap-4" key={dateGroup.date}>  {/* Use date as key instead of index */}

@@ -148,7 +148,7 @@ export function YourPicks() {
     }, [picks, currentWeek, team?.picks, hasChanges]);
 
     if (isLoading) {
-        return <div className="w-fit chakra mx-auto mt-8 px-2 text-2xl text-white bg-black">Loading...</div>;
+        return <div className="w-fit chakra mx-auto mt-20 px-2 text-2xl text-white bg-black">Loading...</div>;
     }
 
     return (
