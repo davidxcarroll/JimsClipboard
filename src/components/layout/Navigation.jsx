@@ -26,9 +26,9 @@ export function Navigation() {
             end  // Add this to ensure exact matching
           >
             {({ isActive, isPending }) => (
-              <p className={`uppercase text-center px-2 text-white -rotate-1 ${
+              <p className={`uppercase text-center px-2 text-white ${
                 // Check if we're on either "/" or "/overview"
-                (isActive || location.pathname === '/overview') ? 'bg-black' : 'bg-black/50'
+                (isActive || location.pathname === '/overview') ? 'bg-black/20 -rotate-2' : 'bg-black'
                 }`}>
                 <i className="text-lg align-top mr-1">✔</i>The Picks
               </p>
@@ -42,7 +42,7 @@ export function Navigation() {
               cursor-pointer"
           >
             {({ isActive }) => (
-              <p className={`uppercase text-center px-2 text-white -rotate-1 ${isActive ? 'bg-black' : 'bg-black/50'
+              <p className={`uppercase text-center px-2 text-white ${isActive ? 'bg-black/20 -rotate-2' : 'bg-black'
                 }`}>
                 <i className="mr-1">⚙</i>Settings
               </p>
