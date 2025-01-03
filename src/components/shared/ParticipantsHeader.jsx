@@ -22,7 +22,9 @@ export function ParticipantsHeader() {
 
   return (
     <div className="flex flex-row h-12 marker sticky top-0 z-50 lg:text-3xl md:text-2xl text-xl shadow-[0_1px_0_rgba(0,0,0,.1)]">
-      <div className="flex-1 min-w-[150px] flex items-center justify-center" />
+      <div className="flex-1 min-w-[150px] flex items-center">
+        <div className="md:px-8 px-2 chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400">Week 18</div>
+      </div>
       <div className="w-[1.5px] bg-neutral-200" />
 
       {users.map((user, index) => {
@@ -31,7 +33,7 @@ export function ParticipantsHeader() {
         return (
           <React.Fragment key={user.id}>
             <div className="flex-1 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
-              <span className="max-[450px]:-rotate-45">{displayName}</span>
+              <span className="max-[450px]:-rotate-45 leading-4 text-center">{displayName}</span>
             </div>
             {index < users.length - 1 && (
               <div className="w-[1.5px] bg-neutral-200" />

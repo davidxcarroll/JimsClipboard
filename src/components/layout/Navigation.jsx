@@ -2,9 +2,11 @@ import { NavLink } from 'react-router-dom'
 import clipImage from '../../assets/clip-305.png'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../config/firebase'
+import { useLocation } from 'react-router-dom'
 
 export function Navigation() {
   const [user] = useAuthState(auth)
+  const location = useLocation()
 
   return (
     <nav className="
@@ -18,24 +20,33 @@ export function Navigation() {
         <>
           <NavLink
             to="/"
-            className={({ isActive }) => `z-20
+            className="z-20
               w-full flex whitespace-nowrap justify-center items-center xs:p-8 p-4
-              hover:underline cursor-pointer ${isActive ? 'underline' : ''}
-            `}
+              cursor-pointer"
+            end  // Add this to ensure exact matching
           >
-            <p className="uppercase text-center">
-              The Picks
-            </p>
+            {({ isActive, isPending }) => (
+              <p className={`uppercase text-center px-2 text-white -rotate-1 ${
+                // Check if we're on either "/" or "/overview"
+                (isActive || location.pathname === '/overview') ? 'bg-black' : 'bg-black/50'
+                }`}>
+                <i className="text-lg align-top mr-1">✔</i>The Picks
+              </p>
+            )}
           </NavLink>
 
           <NavLink
             to="/settings"
-            className={({ isActive }) => `z-20
+            className="z-20
               w-full flex whitespace-nowrap justify-center items-center xs:p-8 p-4
-              hover:underline cursor-pointer ${isActive ? 'underline' : ''}
-            `}
+              cursor-pointer"
           >
-            <p className="uppercase text-center">Settings</p>
+            {({ isActive }) => (
+              <p className={`uppercase text-center px-2 text-white -rotate-1 ${isActive ? 'bg-black' : 'bg-black/50'
+                }`}>
+                <i className="mr-1">⚙</i>Settings
+              </p>
+            )}
           </NavLink>
         </>
       )}

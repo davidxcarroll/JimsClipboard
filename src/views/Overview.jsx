@@ -190,7 +190,8 @@ export function Overview() {
                 lg:mx-8 mx-2
                 lg:p-2 p-2
                 chakra uppercase
-                cursor-pointer bg-amber-300
+                cursor-pointer bg-amber-300 hover:bg-yellow-300
+                ease-in-out transition-colors duration-300
                 lg:text-3xl md:text-2xl text-xl
                 ">
                     <i className="mr-4 group-hover:mr-2 ease-in-out transition-[margin] duration-100">👉</i>
