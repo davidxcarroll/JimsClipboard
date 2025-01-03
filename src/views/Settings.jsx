@@ -390,9 +390,9 @@ export function Settings() {
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-[1px] bg-neutral-200" />
+                {/* <div className="w-full h-[1px] bg-neutral-200" /> */}
 
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <input
                         type="checkbox"
                         id="emailOptOut"
@@ -401,7 +401,7 @@ export function Settings() {
                         className="h-6 w-6 bg-transparent border-2 text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
                     />
                     <label htmlFor="emailOptOut" className="inline">Get reminder emails</label>
-                </div>
+                </div> */}
 
                 {/* Divider */}
                 <div className="w-full h-[1px] bg-neutral-200" />
