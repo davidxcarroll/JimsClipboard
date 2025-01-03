@@ -124,7 +124,14 @@ export function YourPicks() {
     
             await updateTeam(updatedUser)
             toast.success('Picks saved!')
-            navigate('/')
+            
+            // Force Overview to reload by adding state to navigation
+            navigate('/', { 
+                state: { 
+                    refreshData: true,
+                    timestamp: Date.now() 
+                } 
+            })
         } catch (error) {
             console.error('Error saving picks:', error)
             toast.error('Could not save picks')
@@ -148,7 +155,7 @@ export function YourPicks() {
         <>
             <div className="relative flex flex-col">
                 <div className="shadow-[5px_-5px_5px_rgba(0,0,0,.1),-5px_5px_5px_rgba(0,0,0,.1)] z-[2] flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-24 lg:pt-32 md:pt-28 sm:pt-24 xs:pt-20 pt-12">
-                    <div className="xl:absolute top-12 left-12 w-fit flex self-center items-center justify-center -rotate-2 px-2 chakra uppercase text-base bg-amber-300 text-black">
+                    <div className="xl:absolute top-12 left-12 w-fit flex self-center items-center justify-center -rotate-2 px-2 chakra uppercase text-base bg-blue-200 text-blue-700">
                         <i className='mr-2'>📢</i> Picks lock at kickoff
                     </div>
 

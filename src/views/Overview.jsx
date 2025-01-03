@@ -6,6 +6,7 @@ import { scheduleService } from '../services/espn/schedule'
 import { formatGameDate, getDateKey, isPSTDateInFuture } from '../utils/dateUtils';
 import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
 import { useUsers } from '../hooks/useUsers'
+import { useLocation } from 'react-router-dom'
 
 export function Overview() {
     const [currentWeek, setCurrentWeek] = useState(null);
@@ -13,14 +14,14 @@ export function Overview() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { users, loading: usersLoading } = useUsers()
+    const location = useLocation()
 
-    console.log('Overview render:', {
-        users,
-        currentWeek,
-        weekData,
-        loading,
-        usersLoading
-    });
+    useEffect(() => {
+        if (location.state?.refreshData) {
+            setLoading(true) // Force loading state
+            loadData()  // Your existing data loading function
+        }
+    }, [location.state?.refreshData])
 
     const processGamesWithPicks = (games) => {
         if (!users || !currentWeek?.number) return games;
@@ -130,11 +131,11 @@ export function Overview() {
                     to="/picks"
                     className="
                 group
-                flex flex-row items-center justify-center my-2
+                flex flex-row items-center justify-center
                 lg:mx-8 mx-2
                 lg:p-8 p-6
                 chakra uppercase
-                cursor-pointer bg-blue-600 text-white
+                cursor-pointer bg-amber-300
                 lg:text-3xl md:text-2xl text-xl
                 ">
                     <i className="mr-4 group-hover:mr-2 ease-in-out transition-[margin] duration-100">👉</i>
@@ -146,36 +147,33 @@ export function Overview() {
             <ParticipantsHeader />
 
             {sortedDateGroups.map((dateGroup, index) => (
-                <div className="flex flex-col lg:gap-12 gap-8" key={index}>
+                <div className="flex flex-col lg:gap-8 gap-4" key={dateGroup.date}>  {/* Use date as key instead of index */}
                     {/* Date Header */}
                     <div className="
-                    flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
-                    md:px-8 px-2 py-2
-                    uppercase lg:text-xl md:text-lg text-base text-neutral-400
-                    ">
-                        {dateGroup.day}  {/* This will now show the correct day */}
+        flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
+        py-2
+        uppercase lg:text-xl md:text-lg text-base text-neutral-400
+        ">
+                        <div className="md:px-8 px-2">{dateGroup.day}</div>
                     </div>
 
                     {/* Games for this date */}
-                    {sortedDateGroups.map(group => (
-                        <div key={group.date}>
-                            <h2>{group.day}</h2>
-                            {group.games.map(game => (
-                                <MatchupRow
-                                    key={game.id}
-                                    gameId={game.id}
-                                    homeTeam={game.homeTeam}
-                                    awayTeam={game.awayTeam}
-                                    week={currentWeek.number}
-                                    winningTeam={game.winningTeam}
-                                    picks={game.picks}
-                                    users={users}  // Pass users as prop
-                                />
-                            ))}
-                        </div>
-                    ))}
+                        {dateGroup.games.map(game => (
+                            <MatchupRow
+                                key={game.id}
+                                gameId={game.id}
+                                homeTeam={game.homeTeam}
+                                awayTeam={game.awayTeam}
+                                week={currentWeek.number}
+                                winningTeam={game.winningTeam}
+                                picks={game.picks}
+                                users={users}
+                            />
+                        ))}
+
                 </div>
             ))}
+
         </div>
     )
 }

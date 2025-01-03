@@ -90,14 +90,14 @@ export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, pick
     <div className="flex flex-col marker lg:text-3xl md:text-2xl text-xl">
       {/* Home Team Row */}
       <div className="flex flex-row">
-        <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
-          {renderTeamName(homeTeam, winningTeam === homeTeam)}
+        <div className="flex-1 h-auto min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
+          <div className="md:px-8 px-2">{renderTeamName(homeTeam, winningTeam === homeTeam)}</div>
         </div>
 
         {users.map((user, index) => (
           <React.Fragment key={user.id}>
             <div className="w-[1.5px] bg-neutral-200" />
-            <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
+            <div className="flex-1 h-auto min-w-[40px] flex items-center justify-center">
               {renderCheckmark(homeTeam, user.id)}
             </div>
           </React.Fragment>
@@ -109,14 +109,14 @@ export function MatchupRow({ gameId, homeTeam, awayTeam, week, winningTeam, pick
 
       {/* Away Team Row */}
       <div className="flex flex-row">
-        <div className="w-1/5 h-auto min-w-[150px] flex items-center justify-start md:px-8 px-2 py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
-          {renderTeamName(awayTeam, winningTeam === awayTeam)}
+        <div className="flex-1 h-auto min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
+          <div className="md:px-8 px-2">{renderTeamName(awayTeam, winningTeam === awayTeam)}</div>
         </div>
 
         {users.map((user, index) => (
           <React.Fragment key={user.id}>
             <div className="w-[1.5px] bg-neutral-200" />
-            <div className="w-1/5 h-auto min-w-[40px] flex items-center justify-center">
+            <div className="flex-1 h-auto min-w-[40px] flex items-center justify-center">
               {renderCheckmark(awayTeam, user.id)}
             </div>
           </React.Fragment>
