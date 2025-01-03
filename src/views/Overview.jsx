@@ -133,7 +133,7 @@ export function Overview() {
                 group
                 flex flex-row items-center justify-center
                 lg:mx-8 mx-2
-                lg:p-8 p-6
+                lg:p-2 p-2
                 chakra uppercase
                 cursor-pointer bg-amber-300
                 lg:text-3xl md:text-2xl text-xl
