@@ -30,7 +30,7 @@ export function ParticipantsHeader() {
         console.log('Rendering user:', { user, displayName })
         return (
           <React.Fragment key={user.id}>
-            <div className="flex-1 min-w-[50px] flex sm:items-center items-start justify-center max-sm:pt-3">
+            <div className="flex-1 min-w-[30px] flex sm:items-center items-start justify-center max-sm:pt-3">
               <span className="max-[450px]:-rotate-45 leading-4 text-center">{displayName}</span>
             </div>
             {index < users.length - 1 && (

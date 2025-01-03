@@ -118,7 +118,7 @@ export const MatchupRow = React.memo(function MatchupRow({
         {users.map((user, index) => (
           <React.Fragment key={user.id}>
             <div className="w-[1.5px] bg-neutral-200" />
-            <div className="flex-1 h-auto min-w-[40px] flex items-center justify-center">
+            <div className="flex-1 h-auto min-w-[30px] flex items-center justify-center">
               {renderCheckmark(homeTeam, user.id)}
             </div>
           </React.Fragment>
@@ -137,7 +137,7 @@ export const MatchupRow = React.memo(function MatchupRow({
         {users.map((user, index) => (
           <React.Fragment key={user.id}>
             <div className="w-[1.5px] bg-neutral-200" />
-            <div className="flex-1 h-auto min-w-[40px] flex items-center justify-center">
+            <div className="flex-1 h-auto min-w-[30px] flex items-center justify-center">
               {renderCheckmark(awayTeam, user.id)}
             </div>
           </React.Fragment>

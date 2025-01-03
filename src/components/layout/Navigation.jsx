@@ -11,14 +11,14 @@ export function Navigation() {
   return (
     <nav className="
       relative
-      sm:w-full min-w-[360px]
-      lg:h-28 sm:h-24 h-20
+      sm:w-full min-w-[320px]
+      lg:h-28 md:h-24 sm:h-20 xs:h-16 h-14
       flex flex-row gap-20
       chakra lg:text-2xl md:text-xl text-lg
     ">
       {user && (
         <>
-          <NavLink
+          {/* <NavLink
             to="/"
             className="z-20
               w-full flex whitespace-nowrap justify-center items-center xs:p-8 p-4
@@ -28,45 +28,48 @@ export function Navigation() {
             {({ isActive, isPending }) => (
               <p className={`uppercase text-center px-2 text-white ${
                 // Check if we're on either "/" or "/overview"
-                (isActive || location.pathname === '/overview') ? 'bg-black/20 -rotate-2' : 'bg-black'
+                (isActive || location.pathname === '/overview') ? 'hidden' : 'bg-black'
                 }`}>
                 <i className="text-lg align-top mr-1">✔</i>The Picks
               </p>
             )}
-          </NavLink>
+          </NavLink> */}
 
-          <NavLink
+          {/* <NavLink
             to="/settings"
             className="z-20
               w-full flex whitespace-nowrap justify-center items-center xs:p-8 p-4
               cursor-pointer"
           >
             {({ isActive }) => (
-              <p className={`uppercase text-center px-2 text-white ${isActive ? 'bg-black/20 -rotate-2' : 'bg-black'
+              <p className={`uppercase text-center px-2 text-white ${isActive ? 'hidden' : 'bg-black'
                 }`}>
                 <i className="mr-1">⚙</i>Settings
               </p>
             )}
-          </NavLink>
+          </NavLink> */}
         </>
       )}
 
       <div className="
-      absolute left-1/2 -translate-x-1/2 z-10
-      md:top-0 top-6
+      absolute top-0 left-1/2 -translate-x-1/2 z-10
       w-full
       flex flex-col items-center justify-center
       ">
-        <div className="
-        absolute left-1/2 -translate-x-1/2 p-2
-        md:bottom-4 sm:bottom-3 xs:bottom-1 bottom-0
-        text-white text-center uppercase
-        flex items-center justify-center gap-1
-        md:flex-col flex-row
-        ">
+        <NavLink
+          to="/overview"
+          className="
+          absolute left-1/2 -translate-x-1/2 p-2
+          md:bottom-4 sm:bottom-3 xs:bottom-1 bottom-0
+          text-white text-center uppercase
+          flex items-center justify-center gap-1
+          md:flex-col flex-row
+          cursor-pointer
+          "
+        >
           <span className="inline w-fit px-2 bg-black tracking-wider -rotate-1 sm:-ml-4">Jim's</span>
           <span className="inline w-fit px-2 bg-black tracking-wider -rotate-2">Clipboard</span>
-        </div>
+        </NavLink>
         <img
           className="h-auto
             lg:w-[650px] md:w-[600px] sm:w-[500px] xs:w-[400px] w-[320px]

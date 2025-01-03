@@ -11,6 +11,7 @@ import { NFL_TEAMS } from '../store/nfl/teams'
 import { signInWithGoogle } from '../hooks/useAuth';
 import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth'
 import { useTeamLogo } from '../hooks/useTeamLogo'
+import { NavLink } from 'react-router-dom'
 import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
 
 export function Settings() {
@@ -117,17 +118,17 @@ export function Settings() {
 
     const savePick = async (team) => {
         if (!user) return;
-    
+
         setIsSaving(true);
         const currentYear = '2026';
-    
+
         try {
             const userRef = doc(db, 'users', user.uid);
-            
+
             // First get the current user data
             const userSnap = await getDoc(userRef);
             const userData = userSnap.exists() ? userSnap.data() : {};
-            
+
             // Prepare the update object maintaining existing picks
             const updatedData = {
                 ...userData,
@@ -147,17 +148,17 @@ export function Settings() {
                     }
                 }
             };
-    
+
             const promise = setDoc(userRef, updatedData);
-    
+
             toast.promise(promise, {
                 loading: 'Saving...',
                 success: 'Settings saved successfully!',
                 error: 'Error saving settings'
             });
-    
+
             await promise;
-    
+
             // Update initial values after successful save
             setInitialTeam(team);
             setInitialName(name);
@@ -316,7 +317,7 @@ export function Settings() {
                     </div>
                 </div>
 
-                <div className="max-w-xl mx-auto w-full flex flex-col items-center justify-center gap-2">
+                <div className="max-w-xl md:mx-auto mx-4 px-4 w-full flex flex-col items-center justify-center gap-2">
                     <div className="uppercase text-base text-neutral-500">Name</div>
                     <input
                         type="text"
@@ -407,20 +408,15 @@ export function Settings() {
                 <div className="w-full h-[1px] bg-neutral-200" />
 
                 {/* Save Button - only show if there are unsaved changes */}
-                {hasUnsavedChanges && (
-                    <div className="group flex flex-col gap-8 items-center justify-center sticky bottom-0 z-50">
-                        <div
-                            onClick={() => savePick(selectedTeam)}
-                            className="
-                            flex items-center justify-center py-4 px-8 bg-black group-hover:bg-neutral-900 cursor-pointer
-                            chakra uppercase text-white
-                            lg:text-3xl md:text-2xl sm:text-xl text-lg
-                        "
-                        >
-                            Save
-                        </div>
-                    </div>
-                )}
+                <div className="group flex flex-col gap-8 items-center justify-center sticky bottom-0 z-50">
+                    <NavLink
+                        to="/overview"
+                        onClick={() => savePick(selectedTeam)}
+                        className="flex items-center justify-center py-4 px-8 bg-black group-hover:bg-neutral-900 cursor-pointer chakra uppercase text-white lg:text-3xl md:text-2xl sm:text-xl text-lg"
+                    >
+                        Done
+                    </NavLink>
+                </div>
 
                 <div className="flex items-center justify-center">
                     <button

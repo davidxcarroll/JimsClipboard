@@ -20,19 +20,19 @@ export function Overview() {
         const testAPI = async () => {
             try {
                 console.log('🧪 Starting ESPN API Test...\n');
-                
+
                 // Test 1: Get Current Week
                 const week = await scheduleService.getCurrentWeek();
                 console.log('📅 Current Week:', {
                     number: week?.number,
                     type: week?.type
                 });
-                
+
                 if (week?.number) {
                     // Test 2: Get Games
                     const games = await scheduleService.getWeekGames(week.number);
                     console.log(`\n🏈 Found ${games.length} games for Week ${week.number}`);
-                    
+
                     // Test 3: Game Details
                     games.forEach(game => {
                         console.log('\n-------------------');
@@ -42,14 +42,14 @@ export function Overview() {
                         console.log(`Winner: ${game.winner || 'Not finished'}`);
                         console.log(`Date: ${new Date(game.utcDate).toLocaleString()}`);
                     });
-    
+
                     // Test 4: Game States
                     const gameStates = games.reduce((acc, game) => {
                         acc[game.status] = (acc[game.status] || 0) + 1;
                         return acc;
                     }, {});
                     console.log('\n📊 Game States:', gameStates);
-    
+
                     // Test 5: Winners Check
                     const gamesWithWinners = games.filter(g => g.winner);
                     console.log('\n🏆 Games with Winners:', gamesWithWinners.length);
@@ -58,7 +58,7 @@ export function Overview() {
                 console.error('❌ API Test Error:', error);
             }
         };
-    
+
         testAPI();
     }, []); // Run once on component mount
 
@@ -71,12 +71,12 @@ export function Overview() {
 
     const processGamesWithPicks = (games) => {
         if (!users || !currentWeek?.number) return games;
-    
+
         return games.map(game => {
             const gamePicks = {};
             let correctPicks = 0;
             let totalPicks = 0;
-    
+
             users.forEach(user => {
                 const userPicks = user.picks?.[currentWeek.number];
                 if (userPicks) {
@@ -91,7 +91,7 @@ export function Overview() {
                     }
                 }
             });
-    
+
             return {
                 ...game,
                 picks: gamePicks,
@@ -138,7 +138,7 @@ export function Overview() {
         loadData();
     }, [users]); // Keep users as dependency
 
-    if (loading) return <div className="w-fit chakra mx-auto mt-8 px-2 text-2xl text-white bg-black">Loading...</div>;
+    if (loading) return <div className="w-fit chakra mx-auto mt-48 px-2 text-2xl text-white bg-black">Loading...</div>;
 
     // Check if picks are still allowed for this week
     const now = new Date();
@@ -174,31 +174,45 @@ export function Overview() {
         Object.values(gamesByDate).sort((a, b) => new Date(a.date) - new Date(b.date))
         : [];
 
-    if (loading || usersLoading) return <div className="w-fit chakra mx-auto mt-8 px-2 text-2xl text-white bg-black">Loading...</div>;
+    if (loading || usersLoading) return <div className="w-fit chakra mx-auto mt-48 px-2 text-2xl text-white bg-black">Loading...</div>;
 
     return (
         <div className="
             flex flex-col lg:gap-10 gap-6 bg-neutral-100 pb-24
-            lg:pt-28 md:pt-24 sm:pt-20 xs:pt-16 pt-12
+            xl:pt-8 md:pt-28 sm:pt-24 xs:pt-20 pt-14
         ">
-            {picksStillAllowed && (
-                <NavLink
-                    to="/picks"
-                    className="
+
+            <div className="flex flex-row items-center xl:justify-between justify-center gap-2 lg:mx-8 mx-2 z-20">
+
+                {picksStillAllowed && (
+                    <NavLink
+                        to="/picks"
+                        className="
                 group
                 flex flex-row items-center justify-center
-                lg:mx-8 mx-2
-                lg:p-2 p-2
+                lg:py-2 py-2 lg:px-6 px-4
                 chakra uppercase
-                cursor-pointer bg-amber-300 hover:bg-yellow-300
-                ease-in-out transition-colors duration-300
-                lg:text-3xl md:text-2xl text-xl
+                bg-amber-300 hover:bg-yellow-300
+                lg:text-xl md:text-lg text-base
                 ">
-                    <i className="mr-4 group-hover:mr-2 ease-in-out transition-[margin] duration-100">👉</i>
-                    Pick Week {currentWeek?.number}
-                    <i className="ml-4 group-hover:ml-2 ease-in-out transition-[margin] duration-100">👈</i>
+                        <i className="mr-2 max-xs:hidden">✔</i>
+                        Pick Week {currentWeek?.number}
+                    </NavLink>
+                )}
+
+                <NavLink
+                    to="/settings"
+                    className="
+                    group
+                    flex flex-row items-center justify-center
+                    lg:py-2 py-2 px-4
+                    chakra uppercase opacity-50
+                    lg:text-xl md:text-lg text-base
+                    ">
+                    <i className="mr-1">⚙</i>Settings
                 </NavLink>
-            )}
+
+            </div>
 
             <ParticipantsHeader />
 
@@ -221,18 +235,18 @@ export function Overview() {
                     </div>
 
                     {/* Games for this date */}
-                        {dateGroup.games.map(game => (
-                            <MatchupRow
-                                key={game.id}
-                                gameId={game.id}
-                                homeTeam={game.homeTeam}
-                                awayTeam={game.awayTeam}
-                                week={currentWeek.number}
-                                winningTeam={game.winningTeam}
-                                picks={game.picks}
-                                users={users}
-                            />
-                        ))}
+                    {dateGroup.games.map(game => (
+                        <MatchupRow
+                            key={game.id}
+                            gameId={game.id}
+                            homeTeam={game.homeTeam}
+                            awayTeam={game.awayTeam}
+                            week={currentWeek.number}
+                            winningTeam={game.winningTeam}
+                            picks={game.picks}
+                            users={users}
+                        />
+                    ))}
 
                 </div>
             ))}

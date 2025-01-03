@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast, Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { scheduleService } from '../services/espn/schedule'
 import { formatGameDate, formatGameTime, isPSTDateInFuture } from '../utils/dateUtils'
 import { useTeam } from '../hooks/useTeam'
@@ -148,7 +148,7 @@ export function YourPicks() {
     }, [picks, currentWeek, team?.picks, hasChanges]);
 
     if (isLoading) {
-        return <div className="w-fit chakra mx-auto mt-20 px-2 text-2xl text-white bg-black">Loading...</div>;
+        return <div className="w-fit chakra mx-auto mt-48 px-2 text-2xl text-white bg-black">Loading...</div>;
     }
 
     return (
@@ -211,34 +211,21 @@ export function YourPicks() {
                     ))}
 
                     {/* Save Button */}
-                    {hasChanges && (
-                        <div className="group flex flex-col gap-8 items-center justify-center sticky bottom-0 z-50">
-                            <div
-                                onClick={handleSave}
-                                className="flex items-center justify-center py-4 px-8 bg-black group-hover:bg-neutral-900 cursor-pointer chakra uppercase text-white lg:text-3xl md:text-2xl sm:text-xl text-lg"
-                            >
-                                Save Picks
-                            </div>
+                    <div className="group flex flex-col gap-8 items-center justify-center mt-8 sticky bottom-0 z-50 bg-gradient-to-t from-neutral-100/90 from-50% to-neutral-100/0">
+                        <div
+                            onClick={handleSave}
+                            className="flex items-center justify-center py-4 px-8 bg-black group-hover:bg-neutral-900 cursor-pointer chakra uppercase text-white lg:text-3xl md:text-2xl sm:text-xl text-lg"
+                        >
+                            Done
                         </div>
-                    )}
+                    </div>
+                    
                 </div>
 
                 {/* Background Elements */}
                 <div className="absolute -top-2 md:left-12 left-4 z-0 w-11/12 rotate-1 h-10 bg-neutral-200" />
                 <div className="absolute -bottom-2 md:right-12 right-4 z-0 w-11/12 rotate-1 h-10 bg-neutral-200" />
             </div>
-
-            <Toaster
-                position="bottom-center"
-                toastOptions={{
-                    duration: 2000,
-                    style: {
-                        background: '#333',
-                        color: '#fff',
-                        fontFamily: 'chakra'
-                    },
-                }}
-            />
         </>
     )
 }
