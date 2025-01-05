@@ -3,6 +3,12 @@ import { ESPN_TEAM_ABBREVIATIONS } from '../../utils/teamMapping';
 import { formatToTimeZone } from '../../utils/dateUtils';
 
 export class ScheduleService {
+
+  canMakePicksForWeek(games) {
+    // Check if there are any games that haven't started yet (status === 'pre')
+    return games.some(game => game.status === 'pre');
+  }
+
   constructor() {
     this.currentWeek = null;
     this.schedule = null;
@@ -112,15 +118,6 @@ export class ScheduleService {
           return null;
         }
 
-        // Extract favorite team from odds
-        let favorite = null;
-        if (competition.odds?.[0]?.details) {
-          const odds = competition.odds[0];
-          favorite = odds.favorite === 'home' ?
-            gameStatus.homeTeam :
-            gameStatus.awayTeam;
-        }
-
         return {
           id: event.id,
           utcDate: event.date,
@@ -136,7 +133,6 @@ export class ScheduleService {
           },
           venue: competition.venue?.fullName || '',
           broadcast: competition.broadcasts?.[0]?.names?.[0] || '',
-          favorite: favorite
         };
       }).filter(Boolean);
 

@@ -156,7 +156,18 @@ export function YourPicks() {
             <div className="relative flex flex-col">
                 <div className="shadow-[5px_-5px_5px_rgba(0,0,0,.1),-5px_5px_5px_rgba(0,0,0,.1)] z-[2] flex flex-col lg:gap-8 gap-4 bg-neutral-100 pb-24 lg:pt-32 md:pt-28 sm:pt-24 xs:pt-20 pt-12">
                     <div className="xl:absolute top-12 left-12 w-fit flex self-center items-center gap-1 justify-center -rotate-2 px-2 chakra uppercase text-base bg-blue-200 text-blue-700">
-                        <span className="material-symbols-sharp">warning</span> Picks lock at kickoff
+                        <span className="material-symbols-sharp">lock</span> Games lock at kickoff
+                    </div>
+
+                    <div className="
+                        flex items-center justify-center chakra uppercase text-neutral-400
+                        lg:text-5xl text-4xl
+                    ">
+                        {currentWeek?.type === 1 ? "Wild Card Round" :
+                        currentWeek?.type === 2 ? "Divisional Round" :
+                        currentWeek?.type === 3 ? "Conference Championships" :
+                        currentWeek?.type === 4 ? "Super Bowl" :
+                        `Week ${currentWeek?.number}`} Picks
                     </div>
 
                     {weekData && weekData.map((timeGroup, groupIndex) => (
@@ -164,7 +175,7 @@ export function YourPicks() {
                             {/* Date & Time Header */}
                             <div className="flex items-center justify-center h-12 chakra bg-neutral-100 sticky top-0 z-20 uppercase lg:text-xl md:text-lg text-base text-neutral-400 shadow-[0_1px_0_#ddd]">
                                 {timeGroup.date} — {timeGroup.time}
-                                {!isPSTDateInFuture(timeGroup.games[0].date) && <span className="material-symbols-sharp ml-2">lock</span>}
+                                {!isPSTDateInFuture(timeGroup.games[0].date) && <span className="material-symbols-sharp ml-2 md:text-2xl text-lg">lock</span>}
                             </div>
 
                             {/* Games */}

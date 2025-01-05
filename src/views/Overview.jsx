@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ParticipantsHeader } from '../components/shared/ParticipantsHeader'
@@ -23,7 +24,7 @@ export function Overview() {
                 setLoading(true);
                 const week = await scheduleService.getCurrentWeek();
                 const data = await scheduleService.getWeekGames(week.number);
-                
+
                 // Process the games data
                 const processedGames = data.map(game => ({
                     ...game,
@@ -31,7 +32,7 @@ export function Overview() {
                     homeTeam: getDisplayName(game.homeTeam),
                     awayTeam: getDisplayName(game.awayTeam),
                 }));
-    
+
                 setCurrentWeek(week);
                 setWeekData(processedGames);
                 setError(null);
@@ -42,7 +43,7 @@ export function Overview() {
                 setLoading(false);
             }
         };
-    
+
         fetchData();
     }, []);
 
@@ -193,7 +194,7 @@ export function Overview() {
     // Check if picks are still allowed for this week
     const now = new Date();
     const firstGame = weekData?.[0];
-    const picksStillAllowed = weekData?.[0] && isPSTDateInFuture(weekData[0].date);
+    // const picksStillAllowed = weekData?.[0] && isPSTDateInFuture(weekData[0].date);
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
@@ -228,39 +229,35 @@ export function Overview() {
 
     return (
         <div className="
-            flex flex-col lg:gap-10 gap-6 bg-neutral-100 pb-24
-            xl:pt-8 md:pt-28 sm:pt-24 xs:pt-20 pt-14
+        flex flex-col lg:gap-10 gap-6 bg-neutral-100 pb-24
+        xl:pt-8 md:pt-28 sm:pt-24 xs:pt-20 pt-14
         ">
 
             <div className="flex flex-row items-center xl:justify-between sm:justify-center justify-evenly xs:gap-4 lg:mx-8 mx-2">
 
-                {picksStillAllowed && (
-                    <NavLink
-                        to="/picks"
-                        className="
-                        group z-20
-                        flex flex-row items-center justify-center gap-1
-                        lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
-                        chakra uppercase -rotate-2
-                        bg-amber-300 hover:bg-yellow-300
-                        lg:text-xl md:text-lg text-base
-                        ">
-                        {/* <i className="mr-2 max-xs:hidden">✔</i> */}
-                        <span className="material-symbols-sharp">checklist</span>
-                        Pick Week {currentWeek?.number}
-                    </NavLink>
-                )}
+                <NavLink
+                    to="/picks"
+                    className="
+                group z-20
+                flex flex-row items-center justify-center gap-1
+                lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
+                chakra uppercase -rotate-2
+                bg-amber-300 hover:bg-yellow-300
+                lg:text-xl md:text-lg text-base
+                ">
+                    <span className="material-symbols-sharp">checklist</span>
+                    Make Your Picks
+                </NavLink>
 
                 <NavLink
                     to="/settings"
                     className="
-                    group z-20
-                    flex flex-row items-center justify-center gap-1
-                    lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
-                    chakra uppercase opacity-50
-                    lg:text-xl md:text-lg text-base
-                    ">
-                    {/* <i className="mr-1">⚙</i> */}
+                group z-20
+                flex flex-row items-center justify-center gap-1
+                lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
+                chakra uppercase opacity-50
+                lg:text-xl md:text-lg text-base
+                ">
                     <span className="material-symbols-sharp">tune</span>
                     Settings
                 </NavLink>
@@ -273,17 +270,21 @@ export function Overview() {
                 md:px-8 px-2 chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400
                 lg:-mt-20 md:-mt-16 sm:-mt-14 xs:-mt-16 -mt-14
             ">
-                Week 18
+                {currentWeek?.type === 1 ? "Wild Card Round" :
+                    currentWeek?.type === 2 ? "Divisional Round" :
+                        currentWeek?.type === 3 ? "Conference Championships" :
+                            currentWeek?.type === 4 ? "Super Bowl" :
+                                `Week ${currentWeek?.number}`}
             </div>
 
             {sortedDateGroups.map((dateGroup, index) => (
                 <div className="flex flex-col lg:gap-8 gap-4" key={dateGroup.date}>  {/* Use date as key instead of index */}
                     {/* Date Header */}
                     <div className="
-        flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
-        py-2
-        uppercase lg:text-xl md:text-lg text-base text-neutral-400
-        ">
+                    flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
+                    py-2
+                    uppercase lg:text-xl md:text-lg text-base text-neutral-400
+                    ">
                         <div className="md:px-8 px-2">{dateGroup.day}</div>
                     </div>
 
@@ -295,11 +296,9 @@ export function Overview() {
                                 homeTeam={game.homeTeam}
                                 awayTeam={game.awayTeam}
                                 week={currentWeek.number}
-                                winningTeam={game.winner}  // Make sure this matches the property name from the API
-                                // winningTeam={game.winningTeam}
+                                winningTeam={game.winner}
                                 picks={game.picks}
                                 users={users}
-                                favorite={game.favorite}
                             />
                         </ErrorBoundary>
                     ))}
@@ -307,6 +306,44 @@ export function Overview() {
                 </div>
             ))}
 
+            <div className="flex flex-col chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400">
+                <div className="flex flex-row">
+                    {/* Total games column */}
+                    <div className="flex-1 h-auto min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
+                        <div className="md:px-8 px-2">
+                            Total of {weekData?.length || 0}
+                        </div>
+                    </div>
+
+                    {/* Generate columns dynamically for each user */}
+                    {users?.map(user => {
+                        // Calculate correct picks for this user
+                        const correctPicks = weekData?.reduce((total, game) => {
+                            // Only count completed games
+                            if (game.status !== 'post') return total;
+
+                            // Get user's pick for this game
+                            const userPick = game.picks?.[user.id];  // Using user.id instead of uid
+                            const winner = game.winner;
+
+                            // Add 1 if pick matches winner (using ESPN abbreviation), 0 otherwise
+                            return total + ((userPick === getEspnAbbreviation(winner) && winner !== null) ? 1 : 0);
+                        }, 0) || 0;
+
+                        return (
+                            <React.Fragment key={user.id}>
+                                <div className="w-[1.5px] bg-neutral-200" />
+                                <div className="flex-1 h-auto min-w-[30px] flex items-center justify-center">
+                                    {correctPicks}
+                                </div>
+                            </React.Fragment>
+                        );
+                    })}
+                </div>
+            </div>
+
+
+
         </div>
-    )
+    );
 }

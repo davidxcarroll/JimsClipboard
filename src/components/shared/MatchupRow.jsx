@@ -17,8 +17,7 @@ export const MatchupRow = React.memo(function MatchupRow({
   week,
   winningTeam: actualWinningTeam,
   picks,
-  users,
-  favorite
+  users
 }) {
   // Mock logic only runs if enabled
   const MOCK_WINNER = ENABLE_MOCKS && gameId === '401671834' ? 'Browns' : undefined;
@@ -87,13 +86,11 @@ export const MatchupRow = React.memo(function MatchupRow({
   const renderTeamName = (team, isWinner) => {
     const displayName = getDisplayName(team);
     const TeamCircle = getTeamCircle(displayName);
-    const isFavorite = favorite === team;
     
     return (
       <span className="relative inline-block">
         {isWinner && week === 18 && <TeamCircle />}
         {displayName}
-        {isFavorite && <span className="ml-2 text-neutral-400">•</span>}
       </span>
     )
   }
