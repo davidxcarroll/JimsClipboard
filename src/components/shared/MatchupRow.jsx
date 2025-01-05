@@ -17,34 +17,40 @@ export const MatchupRow = React.memo(function MatchupRow({
   week,
   winningTeam: actualWinningTeam,
   picks,
-  users
+  users,
+  favorite
 }) {
   // Mock logic only runs if enabled
   const MOCK_WINNER = ENABLE_MOCKS && gameId === '401671834' ? 'Browns' : undefined;
   const winningTeam = MOCK_WINNER || actualWinningTeam;
 
-  console.log('🎯 Mock status:', {
-    ENABLE_MOCKS,
-    gameId,
-    MOCK_WINNER,
-    actualWinningTeam,
-    finalWinningTeam: winningTeam
-  });
+  // Consolidate logging into debug function
+  const debug = (message, data) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`🎯 ${message}`, data);
+    }
+  };
+
+  const checkPick = (team, participant) => {
+    const espnAbbrev = getEspnAbbreviation(team);
+    debug('Checking pick', { gameId, team, participant, espnAbbrev, picks });
+    return picks?.[participant]?.team === espnAbbrev;
+  };
 
   // Helper to check if participant picked this team
   const didPickTeam = (team, participant) => {
     const espnAbbrev = getEspnAbbreviation(team);
     const hasPick = picks?.[participant] === espnAbbrev;
 
-    console.log('🎯 Checking pick in MatchupRow:', {
-      gameId,
-      team,
-      participant,
-      espnAbbrev,
-      picks,
-      participantPick: picks?.[participant],
-      hasPick
-    });
+    // console.log('🎯 Checking pick in MatchupRow:', {
+    //   gameId,
+    //   team,
+    //   participant,
+    //   espnAbbrev,
+    //   picks,
+    //   participantPick: picks?.[participant],
+    //   hasPick
+    // });
 
     return hasPick;
   }
@@ -53,6 +59,16 @@ export const MatchupRow = React.memo(function MatchupRow({
   const isCorrectPick = (team, participant) => {
     return winningTeam && didPickTeam(team, participant)
   }
+
+  // console.log('🏆 MatchupRow props:', {
+  //   gameId,
+  //   homeTeam,
+  //   awayTeam,
+  //   week,
+  //   winningTeam,
+  //   actualWinningTeam,
+  //   picks
+  // });
 
   // Helper to get random circle check component
   const getRandomCircleCheck = () => {
@@ -71,10 +87,13 @@ export const MatchupRow = React.memo(function MatchupRow({
   const renderTeamName = (team, isWinner) => {
     const displayName = getDisplayName(team);
     const TeamCircle = getTeamCircle(displayName);
+    const isFavorite = favorite === team;
+    
     return (
       <span className="relative inline-block">
         {isWinner && week === 18 && <TeamCircle />}
         {displayName}
+        {isFavorite && <span className="ml-2 text-neutral-400">•</span>}
       </span>
     )
   }
@@ -105,7 +124,7 @@ export const MatchupRow = React.memo(function MatchupRow({
     )
   }
 
-  console.log('MatchupRow render:', { gameId, homeTeam, awayTeam, week, winningTeam, picks, users });
+  // console.log('MatchupRow render:', { gameId, homeTeam, awayTeam, week, winningTeam, picks, users });
 
   return (
     <div className="flex flex-col marker lg:text-3xl md:text-2xl text-xl">

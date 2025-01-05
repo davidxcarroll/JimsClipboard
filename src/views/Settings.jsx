@@ -318,7 +318,7 @@ export function Settings() {
                 </div>
 
                 <div className="max-w-xl md:mx-auto mx-4 px-4 w-full flex flex-col items-center justify-center gap-2">
-                    <div className="uppercase text-base text-neutral-500">Name</div>
+                    <div className="uppercase text-base text-neutral-500">First Name</div>
                     <input
                         type="text"
                         value={name}

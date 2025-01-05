@@ -59,7 +59,8 @@ export function Navigation() {
         <NavLink
           to="/overview"
           className="
-          absolute left-1/2 -translate-x-1/2 p-2
+          absolute z-50
+          left-1/2 -translate-x-1/2 p-2
           md:bottom-4 sm:bottom-3 xs:bottom-1 bottom-0
           text-white text-center uppercase
           flex items-center justify-center gap-1

@@ -4,18 +4,18 @@ import { useUsers } from '../../hooks/useUsers'
 export function ParticipantsHeader() {
   const { users, loading } = useUsers()
 
-  console.log('👥 ParticipantsHeader users:', users?.map(u => ({
-    id: u.id,
-    name: u.name,
-    hasPicks: !!u.picks
-  })));
+  // console.log('👥 ParticipantsHeader users:', users?.map(u => ({
+  //   id: u.id,
+  //   name: u.name,
+  //   hasPicks: !!u.picks
+  // })));
 
   const getDisplayName = (user) => {
     if (!user) return 'Unknown';
     return user.name || user.email?.split('@')[0] || 'Unknown'
   }
 
-  console.log('ParticipantsHeader rendering with users:', users)
+  // console.log('ParticipantsHeader rendering with users:', users)
 
   if (loading) return null;
   if (!Array.isArray(users)) return null;
@@ -27,7 +27,7 @@ export function ParticipantsHeader() {
 
       {users.map((user, index) => {
         const displayName = getDisplayName(user)
-        console.log('Rendering user:', { user, displayName })
+        // console.log('Rendering user:', { user, displayName })
         return (
           <React.Fragment key={user.id}>
             <div className="flex-1 min-w-[30px] flex sm:items-center items-start justify-center max-sm:pt-3">

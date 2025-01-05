@@ -7,6 +7,7 @@ import { formatGameDate, getDateKey, isPSTDateInFuture } from '../utils/dateUtil
 import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
 import { useUsers } from '../hooks/useUsers'
 import { useLocation } from 'react-router-dom'
+import { ErrorBoundary } from '../components/shared/ErrorBoundary';
 
 export function Overview() {
     const [currentWeek, setCurrentWeek] = useState(null);
@@ -15,6 +16,55 @@ export function Overview() {
     const [error, setError] = useState(null);
     const { users, loading: usersLoading } = useUsers()
     const location = useLocation()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const week = await scheduleService.getCurrentWeek();
+                const data = await scheduleService.getWeekGames(week.number);
+                
+                // Process the games data
+                const processedGames = data.map(game => ({
+                    ...game,
+                    winningTeam: game.winner, // Make sure this is passed through
+                    homeTeam: getDisplayName(game.homeTeam),
+                    awayTeam: getDisplayName(game.awayTeam),
+                }));
+    
+                setCurrentWeek(week);
+                setWeekData(processedGames);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const week = await scheduleService.getCurrentWeek();
+                const data = await scheduleService.getWeekGames(week.number);
+
+                setCurrentWeek(week);
+                setWeekData(data);
+            } catch (err) {
+                console.error('Failed to fetch data:', err);
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [location]);
 
     useEffect(() => {
         const testAPI = async () => {
@@ -31,7 +81,7 @@ export function Overview() {
                 if (week?.number) {
                     // Test 2: Get Games
                     const games = await scheduleService.getWeekGames(week.number);
-                    console.log(`\n🏈 Found ${games.length} games for Week ${week.number}`);
+                    // console.log(`\n🏈 Found ${games.length} games for Week ${week.number}`);
 
                     // Test 3: Game Details
                     games.forEach(game => {
@@ -182,19 +232,19 @@ export function Overview() {
             xl:pt-8 md:pt-28 sm:pt-24 xs:pt-20 pt-14
         ">
 
-            <div className="flex flex-row items-center xl:justify-between sm:justify-center justify-evenly xs:gap-4 lg:mx-8 mx-2 z-20">
+            <div className="flex flex-row items-center xl:justify-between sm:justify-center justify-evenly xs:gap-4 lg:mx-8 mx-2">
 
                 {picksStillAllowed && (
                     <NavLink
                         to="/picks"
                         className="
-                group
-                flex flex-row items-center justify-center gap-1
-                lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
-                chakra uppercase -rotate-2
-                bg-amber-300 hover:bg-yellow-300
-                lg:text-xl md:text-lg text-base
-                ">
+                        group z-20
+                        flex flex-row items-center justify-center gap-1
+                        lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
+                        chakra uppercase -rotate-2
+                        bg-amber-300 hover:bg-yellow-300
+                        lg:text-xl md:text-lg text-base
+                        ">
                         {/* <i className="mr-2 max-xs:hidden">✔</i> */}
                         <span className="material-symbols-sharp">checklist</span>
                         Pick Week {currentWeek?.number}
@@ -204,7 +254,7 @@ export function Overview() {
                 <NavLink
                     to="/settings"
                     className="
-                    group
+                    group z-20
                     flex flex-row items-center justify-center gap-1
                     lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
                     chakra uppercase opacity-50
@@ -239,16 +289,19 @@ export function Overview() {
 
                     {/* Games for this date */}
                     {dateGroup.games.map(game => (
-                        <MatchupRow
-                            key={game.id}
-                            gameId={game.id}
-                            homeTeam={game.homeTeam}
-                            awayTeam={game.awayTeam}
-                            week={currentWeek.number}
-                            winningTeam={game.winningTeam}
-                            picks={game.picks}
-                            users={users}
-                        />
+                        <ErrorBoundary key={game.id}>
+                            <MatchupRow
+                                gameId={game.id}
+                                homeTeam={game.homeTeam}
+                                awayTeam={game.awayTeam}
+                                week={currentWeek.number}
+                                winningTeam={game.winner}  // Make sure this matches the property name from the API
+                                // winningTeam={game.winningTeam}
+                                picks={game.picks}
+                                users={users}
+                                favorite={game.favorite}
+                            />
+                        </ErrorBoundary>
                     ))}
 
                 </div>

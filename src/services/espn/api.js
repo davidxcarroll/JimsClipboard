@@ -15,6 +15,15 @@ export const espnApi = {
             }
 
             const data = await response.json();
+            
+            // Debug API response in development
+            if (import.meta.env.DEV) {
+                console.debug('🏈 ESPN API Response:', {
+                    endpoint,
+                    data
+                });
+            }
+            
             return data;
         } catch (error) {
             console.error('ESPN API error:', error);

@@ -8,26 +8,27 @@ export const useUsers = () => {
     const usersRef = useRef(null);
   
     useEffect(() => {
-      console.log('🔥 Setting up Firestore listener');
+    //   console.log('🔥 Setting up Firestore listener');
       const usersRef = collection(db, 'users');
       
       const unsubscribe = onSnapshot(usersRef, (snapshot) => {
-        console.log('🔥 Firestore snapshot received:', {
-          empty: snapshot.empty,
-          size: snapshot.size,
-          metadata: snapshot.metadata
-        });
+
+        // console.log('🔥 Firestore snapshot received:', {
+        //   empty: snapshot.empty,
+        //   size: snapshot.size,
+        //   metadata: snapshot.metadata
+        // });
 
         const usersData = [];
         snapshot.forEach((doc) => {
-          console.log('🔥 Processing doc:', doc.id);
+        //   console.log('🔥 Processing doc:', doc.id);
           usersData.push({
             id: doc.id,
             ...doc.data()
           });
         });
 
-        console.log('🔥 Setting users:', usersData);
+        // console.log('🔥 Setting users:', usersData);
         setUsers(usersData);
         setLoading(false);
       }, (error) => {
@@ -36,7 +37,7 @@ export const useUsers = () => {
       });
   
       return () => {
-        console.log('🔥 Cleaning up Firestore listener');
+        // console.log('🔥 Cleaning up Firestore listener');
         unsubscribe();
       }
     }, []);
