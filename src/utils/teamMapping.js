@@ -22,6 +22,13 @@ export const ESPN_TEAM_ABBREVIATIONS = {
     'MIA': 'MIA',
     'MIN': 'MIN',
     'NE': 'NE',
+    'Patriots': 'NE',
+    'New England': 'NE',
+    'New England Patriots': 'NE',
+    'Buccaneers': 'TB',
+    'Tampa Bay': 'TB', 
+    'Tampa Bay Buccaneers': 'TB',
+    'Bucs': 'TB',
     'NO': 'NO',
     'NYG': 'NYG',
     'NYJ': 'NYJ',
@@ -36,7 +43,7 @@ export const ESPN_TEAM_ABBREVIATIONS = {
 
 // For UI display - friendly/colloquial names
 export const DISPLAY_NAMES = {
-    'ARI': 'Cardinals',
+    'ARI': 'Cards',
     'ATL': 'Falcons',
     'BAL': 'Ravens',
     'BUF': 'Bills',

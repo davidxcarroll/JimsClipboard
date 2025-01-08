@@ -21,7 +21,7 @@ export function ParticipantsHeader() {
   if (!Array.isArray(users)) return null;
 
   return (
-    <div className="flex flex-row h-12 marker sticky top-0 z-50 lg:text-3xl md:text-2xl text-xl shadow-[0_1px_0_rgba(0,0,0,.1)]">
+    <div className="flex flex-row h-12 jim-casual sticky top-0 z-50 lg:text-5xl md:text-4xl text-3xl shadow-[0_1px_0_rgba(0,0,0,.1)]">
       <div className="flex-1 min-w-[150px] flex items-center justify-center" />
       <div className="w-[1.5px] bg-neutral-200" />
 

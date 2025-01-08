@@ -9,7 +9,24 @@ html, body {
     background-color: black;
 }
 
-/* Fonts */
+/* Font Face */
+
+@font-face {
+    font-family: 'JimCasual';
+    src: url('./assets/fonts/JimCasual-02.woff2') format('woff2'),
+         url('./assets/fonts/JimCasual-02.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.jim-casual {
+    font-family: "JimCasual", serif;
+    font-weight: 200;
+    font-style: italic;
+}
+
+/* Google Fonts */
 
 .marker {
     font-family: "Permanent Marker", serif;
@@ -22,6 +39,8 @@ html, body {
     font-weight: 700;
     font-style: normal;
 }
+
+/* Noto */
 
 i {
   font-family: "Noto Emoji", serif;

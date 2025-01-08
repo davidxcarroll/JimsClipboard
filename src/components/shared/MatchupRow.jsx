@@ -124,7 +124,7 @@ export const MatchupRow = React.memo(function MatchupRow({
   // console.log('MatchupRow render:', { gameId, homeTeam, awayTeam, week, winningTeam, picks, users });
 
   return (
-    <div className="flex flex-col marker lg:text-3xl md:text-2xl text-xl">
+    <div className="flex flex-col jim-casual lg:text-5xl md:text-4xl text-3xl">
       {/* Home Team Row */}
       <div className="flex flex-row">
         <div className="flex-1 h-auto min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">

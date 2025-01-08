@@ -160,8 +160,8 @@ export function YourPicks() {
                     </div>
 
                     <div className="
-                        flex items-center justify-center chakra uppercase text-neutral-400
-                        lg:text-5xl text-4xl
+                        flex items-center justify-center jim-casual
+                        lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                     ">
                         {currentWeek?.type === 1 ? "Wild Card Round" :
                         currentWeek?.type === 2 ? "Divisional Round" :
@@ -189,8 +189,8 @@ export function YourPicks() {
                                         <div
                                             onClick={() => !gameStarted && handleTeamClick(game.id, game.homeTeam)}
                                             className={`
-                                                w-1/2 flex items-center justify-center p-8 marker text-center 
-                                                lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl
+                                                w-1/2 flex items-center justify-center p-8 jim-casual text-center 
+                                                lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                                                 ${gameStarted ? 'cursor-not-allowed' : 'cursor-pointer'}
                                                 ${selectedTeam === game.homeTeam ? '' : 'text-neutral-400'}
                                             `}
@@ -207,8 +207,8 @@ export function YourPicks() {
                                         <div
                                             onClick={() => !gameStarted && handleTeamClick(game.id, game.awayTeam)}
                                             className={`
-                                                w-1/2 flex items-center justify-center p-8 marker text-center 
-                                                lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl
+                                                w-1/2 flex items-center justify-center p-8 jim-casual text-center 
+                                                lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                                                 ${gameStarted ? 'cursor-not-allowed' : 'cursor-pointer'}
                                                 ${selectedTeam === game.awayTeam ? '' : 'text-neutral-400'}
                                             `}

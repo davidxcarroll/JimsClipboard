@@ -307,12 +307,12 @@ export function Settings() {
 
                 <div className="flex flex-col gap-2 items-center justify-center">
                     <div className="
-                    flex items-center justify-center marker
-                    lg:text-5xl text-4xl
+                    flex items-center justify-center jim-casual
+                    lg:text-7xl text-6xl
                     ">
                         Settings
                     </div>
-                    <div className="text-neutral-500">
+                    <div className="uppercase text-base text-neutral-500">
                         {user.email}
                     </div>
                 </div>
@@ -332,7 +332,7 @@ export function Settings() {
                 <div className="w-full h-[1px] bg-neutral-200" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="flex flex-row items-center gap-1 font-medium">25/26 <span className="material-symbols-sharp">trophy</span> Super Bowl pick</label>
+                    <label className="flex flex-row items-center gap-1 uppercase text-base text-neutral-500">25/26 <span className="material-symbols-sharp">trophy</span> Super Bowl pick</label>
                     {selectedTeam && (
                         <div
                             className="w-full flex flex-col items-center justify-center"
@@ -361,7 +361,7 @@ export function Settings() {
                         value={selectedTeam}
                         onChange={handleTeamSelect}
                         disabled={isSaving}
-                        className="w-full p-4 marker text-center sm:text-2xl text-xl border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
+                        className="w-full p-4 chakra text-center text-xl border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
                     >
                         <option value="">Select a team</option>
                         {NFL_TEAMS.map(team => (
@@ -375,11 +375,11 @@ export function Settings() {
                 <div className="w-full h-[1px] bg-neutral-200" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="flex flex-row items-center gap-1 font-medium">Time <span className="material-symbols-sharp">language</span> Zone</label>
+                    <label className="flex flex-row items-center gap-1 uppercase text-base text-neutral-500">Time <span className="material-symbols-sharp">language</span> Zone</label>
                     <select
                         value={timeZone}
                         onChange={(e) => setTimeZone(e.target.value)}
-                        className="w-full p-4 marker text-center sm:text-2xl text-xl border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
+                        className="w-full p-4 chakra text-center text-xl border-none text-black accent-black focus:ring-black focus:ring-4 focus:ring-offset-2"
                     >
                         <option value="America/Los_Angeles">Pacific (PT)</option>
                         <option value="America/Denver">Mountain (MT)</option>
@@ -441,8 +441,8 @@ export function Settings() {
         ">
 
             <div className="
-            flex items-center justify-center marker
-            lg:text-5xl text-4xl
+            flex items-center justify-center jim-casual
+            lg:text-7xl text-6xl
             ">
                 Hiya!
             </div>
