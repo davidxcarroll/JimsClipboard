@@ -4,8 +4,8 @@ import { NavLink } from 'react-router-dom'
 import { ParticipantsHeader } from '../components/shared/ParticipantsHeader'
 import { MatchupRow } from '../components/shared/MatchupRow'
 import { scheduleService } from '../services/espn/schedule'
-import { formatGameDate, getDateKey, isPSTDateInFuture } from '../utils/dateUtils';
-import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
+import { formatGameDate, getDateKey } from '../utils/dateUtils';
+import { getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
 import { useUsers } from '../hooks/useUsers'
 import { useLocation } from 'react-router-dom'
 import { ErrorBoundary } from '../components/shared/ErrorBoundary';
@@ -17,43 +17,99 @@ export function Overview() {
     const [error, setError] = useState(null);
     const { users, loading: usersLoading } = useUsers()
     const location = useLocation()
+    const [availableWeeks, setAvailableWeeks] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
                 const week = await scheduleService.getCurrentWeek();
-                const data = await scheduleService.getWeekGames(week.number);
-
-                // Process the games data
-                const processedGames = data.map(game => ({
-                    ...game,
-                    winningTeam: game.winner, // Make sure this is passed through
-                    homeTeam: getDisplayName(game.homeTeam),
-                    awayTeam: getDisplayName(game.awayTeam),
-                }));
-
+                console.log('Current week from API:', week); // Debug log
                 setCurrentWeek(week);
-                setWeekData(processedGames);
-                setError(null);
+
+                // Generate available weeks for the season
+                const weeks = [];
+
+                // Preseason
+                weeks.push(
+                    { number: 1, seasonType: 1, type: null, label: "Hall of Fame Game" },
+                    { number: 2, seasonType: 1, type: null, label: "Preseason Week 1" },
+                    { number: 3, seasonType: 1, type: null, label: "Preseason Week 2" },
+                    { number: 4, seasonType: 1, type: null, label: "Preseason Week 3" }
+                );
+
+                // Regular Season (1-18)
+                for (let i = 1; i <= 18; i++) {
+                    weeks.push({
+                        number: i,
+                        seasonType: 2,
+                        type: null,
+                        label: `Week ${i}`
+                    });
+                }
+
+                // Playoffs
+                weeks.push(
+                    { number: 1, seasonType: 3, type: 1, label: "Wild Card" },
+                    { number: 2, seasonType: 3, type: 2, label: "Divisional" },
+                    { number: 3, seasonType: 3, type: 3, label: "Conference" },
+                    { number: 5, seasonType: 3, type: 5, label: "Super Bowl" }
+                );
+
+                setAvailableWeeks(weeks);
+
+                const data = await scheduleService.getWeekGames(week.number, week.type);
+                console.log('Initial week data:', data); // Debug log
+                setWeekData(data);
             } catch (err) {
-                console.error('Error fetching data:', err);
-                setError(err.message);
+                console.error('Failed to fetch data:', err);
+                setError(err);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [location]);
+
+    const handleWeekChange = async (event) => {
+        // Parse both parts of the composite value
+        const [seasonType, weekNumber] = event.target.value.split('-').map(Number);
+
+        // Find the week using both seasonType and number
+        const selectedWeek = availableWeeks.find(w =>
+            w.seasonType === seasonType && w.number === weekNumber
+        );
+
+        console.log('Selected week:', selectedWeek); // Debug log
+
+        if (!selectedWeek) return;
+
+        setCurrentWeek(selectedWeek);
+        setLoading(true);
+
+        try {
+            const data = await scheduleService.getWeekGames(
+                selectedWeek.number,
+                selectedWeek.type,
+                selectedWeek.seasonType
+            );
+            console.log('Fetched week data:', data);
+            setWeekData(data);
+        } catch (err) {
+            console.error('Error fetching week data:', err);
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
                 const week = await scheduleService.getCurrentWeek();
-                const data = await scheduleService.getWeekGames(week.number);
-
+                const data = await scheduleService.getWeekGames(week.number, week.type);
                 setCurrentWeek(week);
                 setWeekData(data);
             } catch (err) {
@@ -81,7 +137,7 @@ export function Overview() {
 
                 if (week?.number) {
                     // Test 2: Get Games
-                    const games = await scheduleService.getWeekGames(week.number);
+                    const games = await scheduleService.getWeekGames(week.number, week.type);
                     // console.log(`\n🏈 Found ${games.length} games for Week ${week.number}`);
 
                     // Test 3: Game Details
@@ -120,39 +176,36 @@ export function Overview() {
         }
     }, [location.state?.refreshData])
 
-    const processGamesWithPicks = (games) => {
+    const getUserPicks = (user, weekNumber) => {
+        if (weekNumber <= 18) {
+          return user.seasons?.[2024]?.regular_season?.[weekNumber];
+        }
+        const round = weekNumber === 19 ? 'wildcard' : 
+                      weekNumber === 20 ? 'divisional' : 'conference';
+        return user.seasons?.[2024]?.playoffs?.[round];
+      };
+      
+      const processGamesWithPicks = (games) => {
         if (!users || !currentWeek?.number) return games;
-
-        return games.map(game => {
-            const gamePicks = {};
-            let correctPicks = 0;
-            let totalPicks = 0;
-
-            users.forEach(user => {
-                const userPicks = user.picks?.[currentWeek.number];
-                if (userPicks) {
-                    const gamePick = userPicks[game.id];
-                    if (gamePick) {
-                        gamePicks[user.id] = gamePick;
-                        totalPicks++;
-                        // Check if pick was correct (only for completed games)
-                        if (game.status === 'post' && game.winner === gamePick) {
-                            correctPicks++;
-                        }
-                    }
-                }
-            });
-
-            return {
-                ...game,
-                picks: gamePicks,
-                pickStats: {
-                    total: totalPicks,
-                    correct: correctPicks
-                }
-            };
+        return games.map((game) => {
+          const picks = {};
+          users.forEach((user) => {
+            const userPicks = getUserPicks(user, currentWeek.number);
+            const pick = userPicks?.[game.id];
+            if (pick) {
+              picks[user.id] = { team: pick }; // Storing ESPN abbreviation
+              console.log(`User ${user.id} pick for game ${game.id}:`, {
+                pick,
+                homeTeam: game.homeTeam,
+                homeAbbrev: getEspnAbbreviation(game.homeTeam),
+                awayTeam: game.awayTeam,
+                awayAbbrev: getEspnAbbreviation(game.awayTeam)
+              });
+            }
+          });
+          return { ...game, picks };
         });
-    };
+      };
 
     useEffect(() => {
         const loadData = async () => {
@@ -235,19 +288,27 @@ export function Overview() {
 
             <div className="flex flex-row items-center xl:justify-between sm:justify-center justify-evenly xs:gap-4 lg:mx-8 mx-2">
 
-                <NavLink
-                    to="/picks"
-                    className="
-                group z-20
-                flex flex-row items-center justify-center gap-1
-                lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
-                chakra uppercase -rotate-2
-                bg-amber-300 hover:bg-yellow-300
-                lg:text-xl md:text-lg text-base
-                ">
-                    <span className="material-symbols-sharp">checklist</span>
-                    Make Your Picks
-                </NavLink>
+            <NavLink
+    to="/picks"
+    state={{ 
+        week: {
+            number: currentWeek.number,
+            seasonType: currentWeek.seasonType,
+            type: currentWeek.type,
+            label: currentWeek.label
+        }
+    }}
+    className="
+    group z-20
+    flex flex-row items-center justify-center gap-1
+    lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
+    chakra uppercase -rotate-2
+    bg-amber-300 hover:bg-yellow-300
+    lg:text-xl md:text-lg text-base
+    ">
+    <span className="material-symbols-sharp">checklist</span>
+    Make Your Picks
+</NavLink>
 
                 <NavLink
                     to="/settings"
@@ -255,7 +316,7 @@ export function Overview() {
                 group z-20
                 flex flex-row items-center justify-center gap-1
                 lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
-                chakra uppercase opacity-50
+                chakra uppercase
                 lg:text-xl md:text-lg text-base
                 ">
                     <span className="material-symbols-sharp">tune</span>
@@ -266,15 +327,37 @@ export function Overview() {
 
             <ParticipantsHeader />
 
+            {/* WEEK TITLE */}
             <div className="
-                md:px-8 px-2 chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400
+                md:px-8 px-2
+                chakra uppercase
+                lg:text-xl md:text-lg text-base
                 lg:-mt-20 md:-mt-16 sm:-mt-14 xs:-mt-16 -mt-14
+                z-50
+                relative
+                flex items-center gap-1
             ">
-                {currentWeek?.type === 1 ? "Wild Card Round" :
-                    currentWeek?.type === 2 ? "Divisional Round" :
-                        currentWeek?.type === 3 ? "Conference Championships" :
-                            currentWeek?.type === 4 ? "Super Bowl" :
-                                `Week ${currentWeek?.number}`}
+                {/* Visible text */}
+                <div className="flex items-center gap-1 pointer-events-none">
+                    {currentWeek?.label || 'Select Week'}
+                    <span className="material-symbols-sharp">expand_more</span>
+                </div>
+
+                {/* Invisible select on top */}
+                <select
+                    value={`${currentWeek?.seasonType}-${currentWeek?.number}` || ''}
+                    onChange={handleWeekChange}
+                    className="absolute md:left-8 left-2 opacity-0 cursor-pointer w-fit min-w-[150px]"
+                >
+                    {availableWeeks.map((week) => (
+                        <option
+                            key={`${week.seasonType}-${week.number}`}
+                            value={`${week.seasonType}-${week.number}`}
+                        >
+                            {week.label}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             {sortedDateGroups.map((dateGroup, index) => (
@@ -283,7 +366,7 @@ export function Overview() {
                     <div className="
                     flex items-center h-12 chakra bg-neutral-100 sticky top-0 z-20
                     py-2
-                    uppercase lg:text-xl md:text-lg text-base text-neutral-400
+                    uppercase lg:text-xl md:text-lg text-base
                     ">
                         <div className="md:px-8 px-2">{dateGroup.day}</div>
                     </div>
@@ -306,7 +389,7 @@ export function Overview() {
                 </div>
             ))}
 
-            <div className="flex flex-col chakra uppercase lg:text-xl md:text-lg text-base text-neutral-400">
+            <div className="flex flex-col chakra uppercase lg:text-xl md:text-lg text-base">
                 <div className="flex flex-row">
                     {/* Total games column */}
                     <div className="flex-1 h-auto min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
@@ -319,20 +402,15 @@ export function Overview() {
                     {users?.map(user => {
                         // Calculate correct picks for this user
                         const correctPicks = weekData?.reduce((total, game) => {
-                            // Only count completed games
                             if (game.status !== 'post') return total;
-
-                            // Get user's pick for this game
-                            const userPick = game.picks?.[user.id];  // Using user.id instead of uid
+                            const userPick = game.picks?.[user.id]?.team;  // Get the team value
                             const winner = game.winner;
-
-                            // Add 1 if pick matches winner (using ESPN abbreviation), 0 otherwise
                             return total + ((userPick === getEspnAbbreviation(winner) && winner !== null) ? 1 : 0);
                         }, 0) || 0;
 
                         return (
                             <React.Fragment key={user.id}>
-                                <div className="w-[1.5px] bg-neutral-200" />
+                                <div className="w-[1.5px] bg-black" />
                                 <div className="flex-1 h-auto min-w-[30px] flex items-center justify-center">
                                     {correctPicks}
                                 </div>
@@ -342,7 +420,9 @@ export function Overview() {
                 </div>
             </div>
 
-
+            {/* Background Elements */}
+            {/* <div className="absolute -top-2 md:left-12 left-4 z-0 w-11/12 rotate-1 h-10 bg-neutral-200" /> */}
+            {/* <div className="absolute -bottom-2 md:right-12 right-4 z-0 w-11/12 rotate-1 h-10 bg-neutral-200" /> */}
 
         </div>
     );

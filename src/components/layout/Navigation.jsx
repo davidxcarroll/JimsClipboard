@@ -12,7 +12,7 @@ export function Navigation() {
     <nav className="
       relative
       sm:w-full min-w-[320px]
-      lg:h-28 md:h-24 sm:h-20 xs:h-16 h-14
+      lg:h-14 md:h-12 sm:h-10 h-8
       flex flex-row gap-20
       chakra lg:text-2xl md:text-xl text-lg
     ">
@@ -52,7 +52,8 @@ export function Navigation() {
       )}
 
       <div className="
-      absolute top-0 left-1/2 -translate-x-1/2 z-10
+      absolute left-1/2 -translate-x-1/2 z-10
+      lg:-top-14 md:-top-12 sm:-top-10 xs:-top-8 -top-6
       w-full
       flex flex-col items-center justify-center
       ">

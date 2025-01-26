@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { scheduleService } from '../services/espn/schedule'
 import { formatGameDate, formatGameTime, isPSTDateInFuture } from '../utils/dateUtils'
@@ -7,6 +7,7 @@ import { useTeam } from '../hooks/useTeam'
 import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
 
 export function YourPicks() {
+    const location = useLocation()
     const navigate = useNavigate()
     const { team, updateTeam } = useTeam()
     const [picks, setPicks] = useState({})
@@ -15,17 +16,8 @@ export function YourPicks() {
     const [isLoading, setIsLoading] = useState(true)
 
     const hasChanges = useMemo(() => {
-        if (!currentWeek?.number || !team) {
-            console.log('Missing data:', { currentWeek, team });
-            return false;
-        }
-        const savedPicks = team.picks?.[currentWeek.number] || {};
-        console.log('Comparing picks:', {
-            current: picks,
-            saved: savedPicks,
-            areEqual: JSON.stringify(picks) === JSON.stringify(savedPicks),
-            team
-        });
+        if (!currentWeek?.number || !team) return false;
+        const savedPicks = team.seasons?.[2024]?.regular_season?.[currentWeek.number] || {};
         return JSON.stringify(picks) !== JSON.stringify(savedPicks);
     }, [picks, team, currentWeek?.number]);
 
@@ -35,26 +27,29 @@ export function YourPicks() {
     }, []);
 
     useEffect(() => {
-        console.log('Team or week changed:', { team, currentWeek });
         if (team && currentWeek?.number) {
-            const savedPicks = team.picks?.[currentWeek.number] || {};
-            console.log('Loading saved picks:', savedPicks);
-            setPicks(savedPicks);
-            setIsLoading(false);
+          const savedPicks = team.seasons?.[2024]?.regular_season?.[currentWeek.number] || {};
+          setPicks(savedPicks);
+          setIsLoading(false);
         }
-    }, [team, currentWeek?.number]);
-
-    // Load saved picks when week changes or team data updates
-    useEffect(() => {
-        if (team?.picks && currentWeek?.number) {
-            setPicks(team.picks[currentWeek.number] || {});
-        }
-    }, [team?.picks, currentWeek?.number]);
+      }, [team, currentWeek?.number]);
 
     const loadCurrentWeek = async () => {
         try {
-            const week = await scheduleService.getCurrentWeek()
-            setCurrentWeek(week)
+            // Check if week was passed through navigation state
+            const passedWeek = location.state?.week;
+            
+            let week;
+            if (passedWeek) {
+                // Use the passed week
+                week = passedWeek;
+                setCurrentWeek(week);
+            } else {
+                // Fallback to getting current week from API
+                week = await scheduleService.getCurrentWeek();
+                setCurrentWeek(week);
+            }
+    
             const games = await scheduleService.getWeekGames(week.number, week.type)
 
             // Convert team abbreviations to full names using getDisplayName
@@ -102,41 +97,32 @@ export function YourPicks() {
 
     const handleSave = async () => {
         if (!team || !currentWeek?.number) {
-            toast.error('Unable to save picks at this time')
-            return
+          toast.error('Unable to save picks at this time');
+          return;
         }
-    
+      
         try {
-            const updatedUser = {
-                ...team,
-                picks: {
-                    ...team.picks,
-                    [currentWeek.number]: picks
+          const updatedUser = {
+            ...team,
+            seasons: {
+              ...team.seasons,
+              2024: {
+                ...team.seasons?.[2024],
+                regular_season: {
+                  ...team.seasons?.[2024]?.regular_season,
+                  [currentWeek.number]: picks
                 }
+              }
             }
-            
-            console.log('Saving picks:', {
-                userId: team.id,
-                weekNumber: currentWeek.number,
-                picks,
-                updatedUser
-            });
-    
-            await updateTeam(updatedUser)
-            toast.success('Picks saved!')
-            
-            // Force Overview to reload by adding state to navigation
-            navigate('/', { 
-                state: { 
-                    refreshData: true,
-                    timestamp: Date.now() 
-                } 
-            })
+          };
+          await updateTeam(updatedUser);
+          toast.success('Picks saved!');
+          navigate('/', { state: { refreshData: true, timestamp: Date.now() } });
         } catch (error) {
-            console.error('Error saving picks:', error)
-            toast.error('Could not save picks')
+          console.error('Error saving picks:', error);
+          toast.error('Could not save picks');
         }
-    }
+      };
 
     useEffect(() => {
         console.log('Current state:', {
@@ -160,12 +146,13 @@ export function YourPicks() {
                     </div>
 
                     <div className="
-                        flex items-center justify-center jim-casual
-                        lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
+                        flex items-center justify-center
+                        chakra uppercase
+                        lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl
                     ">
-                        {currentWeek?.type === 1 ? "Wild Card Round" :
-                        currentWeek?.type === 2 ? "Divisional Round" :
-                        currentWeek?.type === 3 ? "Conference Championships" :
+                        {currentWeek?.type === 1 ? "Wild Card" :
+                        currentWeek?.type === 2 ? "Divisional" :
+                        currentWeek?.type === 3 ? "Conference" :
                         currentWeek?.type === 4 ? "Super Bowl" :
                         `Week ${currentWeek?.number}`} Picks
                     </div>
@@ -173,7 +160,7 @@ export function YourPicks() {
                     {weekData && weekData.map((timeGroup, groupIndex) => (
                         <div key={groupIndex} className="flex flex-col">
                             {/* Date & Time Header */}
-                            <div className="flex items-center justify-center h-12 chakra bg-neutral-100 sticky top-0 z-20 uppercase lg:text-xl md:text-lg text-base text-neutral-400 shadow-[0_1px_0_#ddd]">
+                            <div className="flex items-center justify-center h-12 chakra bg-neutral-100 sticky top-0 z-20 uppercase lg:text-xl md:text-lg text-base text-black shadow-[0_1px_0_#000]">
                                 {timeGroup.date} — {timeGroup.time}
                                 {!isPSTDateInFuture(timeGroup.games[0].date) && <span className="material-symbols-sharp ml-2 md:text-2xl text-lg">lock</span>}
                             </div>
@@ -192,14 +179,14 @@ export function YourPicks() {
                                                 w-1/2 flex items-center justify-center p-8 jim-casual text-center 
                                                 lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                                                 ${gameStarted ? 'cursor-not-allowed' : 'cursor-pointer'}
-                                                ${selectedTeam === game.homeTeam ? '' : 'text-neutral-400'}
+                                                ${selectedTeam === game.homeTeam ? '' : 'text-black'}
                                             `}
                                         >
                                             {game.homeTeam} {selectedTeam === game.homeTeam && '✔'}
                                         </div>
 
                                         {/* @ Symbol */}
-                                        <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-neutral-400">
+                                        <div className="absolute w-10 h-10 z-0 flex items-center justify-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 chakra lg:text-xl md:text-lg text-base text-black">
                                             @
                                         </div>
 
@@ -210,7 +197,7 @@ export function YourPicks() {
                                                 w-1/2 flex items-center justify-center p-8 jim-casual text-center 
                                                 lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                                                 ${gameStarted ? 'cursor-not-allowed' : 'cursor-pointer'}
-                                                ${selectedTeam === game.awayTeam ? '' : 'text-neutral-400'}
+                                                ${selectedTeam === game.awayTeam ? '' : 'text-black'}
                                             `}
                                         >
                                             {game.awayTeam} {selectedTeam === game.awayTeam && '✔'}

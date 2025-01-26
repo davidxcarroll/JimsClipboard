@@ -1,6 +1,5 @@
 import { espnApi } from './api';
 import { ESPN_TEAM_ABBREVIATIONS } from '../../utils/teamMapping';
-import { formatToTimeZone } from '../../utils/dateUtils';
 
 export class ScheduleService {
 
@@ -18,13 +17,97 @@ export class ScheduleService {
   async getCurrentWeek() {
     try {
       const response = await espnApi.get('/scoreboard');
-      if (response?.week) {
-        return {
-          number: response.week.number,
-          type: response.week.type
-        };
+      if (!response?.leagues?.[0]?.calendar) {
+        return null;
       }
-      return null;
+  
+      const now = new Date();
+      const calendar = response.leagues[0].calendar;
+      
+      let currentPeriod = null;
+      for (const period of calendar) {
+        const startDate = new Date(period.startDate);
+        const endDate = new Date(period.endDate);
+        
+        if (now >= startDate && now <= endDate) {
+          currentPeriod = period;
+          break;
+        }
+      }
+  
+      if (!currentPeriod) {
+        console.warn('No current period found in calendar');
+        return null;
+      }
+  
+      if (currentPeriod.label === 'Postseason') {
+        for (const entry of currentPeriod.entries) {
+          const startDate = new Date(entry.startDate);
+          const endDate = new Date(entry.endDate);
+          
+          if (now >= startDate && now <= endDate) {
+            let weekType;
+            let normalizedLabel = entry.label;
+
+            switch(entry.label) {
+              case 'Wild Card':
+              case 'Wild Card Round': 
+                weekType = 1; 
+                normalizedLabel = 'Wild Card';
+                break;
+              case 'Divisional':
+              case 'Divisional Round': 
+                weekType = 2; 
+                normalizedLabel = 'Divisional';
+                break;
+              case 'Conference':
+              case 'Conference Championship': 
+                weekType = 3; 
+                normalizedLabel = 'Conference';
+                break;
+              case 'Pro Bowl': 
+                weekType = 4; 
+                normalizedLabel = 'Pro Bowl';
+                break;
+              case 'Super Bowl': 
+                weekType = 5; 
+                normalizedLabel = 'Super Bowl';
+                break;
+              default: 
+                weekType = null;
+            }
+  
+            if (import.meta.env.DEV) {
+              console.debug('📅 Current Week from Calendar:', {
+                label: normalizedLabel,
+                weekType,
+                startDate,
+                endDate,
+                now
+              });
+            }
+  
+            return {
+              number: parseInt(entry.value),
+              type: weekType,
+              seasonType: 3, // Postseason
+              label: normalizedLabel,
+              startDate,
+              endDate
+            };
+          }
+        }
+      }
+  
+      return {
+        number: parseInt(currentPeriod.value),
+        type: null,
+        seasonType: 2, // Regular season
+        label: currentPeriod.label,
+        startDate: new Date(currentPeriod.startDate),
+        endDate: new Date(currentPeriod.endDate)
+      };
+  
     } catch (error) {
       console.error('Error getting current week:', error);
       return null;
@@ -84,26 +167,44 @@ export class ScheduleService {
     }
   }
 
-  async getWeekGames(weekNumber, seasonType = 2) {
+  async getWeekGames(weekNumber, weekType) {
     try {
       this.clearCache();
 
-      const response = await espnApi.get(`/scoreboard?week=${weekNumber}`);
+      // Map week type to season type
+      // weekType: undefined/null = regular season (2)
+      // weekType: 1 = Wild Card (3)
+      // weekType: 2 = Divisional (3)
+      // weekType: 3 = Conference (3)
+      // weekType: 4 = Super Bowl (3)
+      const seasonType = weekType >= 1 ? 3 : 2;
+
+      if (import.meta.env.DEV) {
+        console.debug('🏈 Getting games for:', {
+          weekNumber,
+          weekType,
+          seasonType,
+        });
+      }
+
+      const response = await espnApi.get(`/scoreboard?week=${weekNumber}&seasontype=${seasonType}`);
 
       if (!response?.events) {
         console.warn('No events found in response');
         return [];
       }
 
-      // Debug the filtered events
+      // Debug logging
       if (import.meta.env.DEV) {
         console.debug('🏈 Week Events:', {
           weekNumber,
-          totalEvents: response.events.length,
-          events: response.events
+          weekType,
+          seasonType,
+          totalEvents: response.events.length
         });
       }
 
+      // Filter events for the correct week and season type
       const weekEvents = response.events.filter(event =>
         event.week?.number === parseInt(weekNumber) &&
         event.season?.type === seasonType

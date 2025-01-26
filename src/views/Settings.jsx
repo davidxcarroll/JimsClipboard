@@ -312,13 +312,13 @@ export function Settings() {
                     ">
                         Settings
                     </div>
-                    <div className="uppercase text-base text-neutral-500">
+                    <div className="uppercase text-base text-black">
                         {user.email}
                     </div>
                 </div>
 
                 <div className="max-w-xl md:mx-auto mx-4 px-4 w-full flex flex-col items-center justify-center gap-2">
-                    <div className="uppercase text-base text-neutral-500">First Name</div>
+                    <div className="uppercase text-base text-black">First Name</div>
                     <input
                         type="text"
                         value={name}
@@ -329,10 +329,10 @@ export function Settings() {
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-[1px] bg-neutral-200" />
+                <div className="w-full h-[1.5px] bg-black" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="flex flex-row items-center gap-1 uppercase text-base text-neutral-500">25/26 <span className="material-symbols-sharp">trophy</span> Super Bowl pick</label>
+                    <label className="flex flex-row items-center gap-1 uppercase text-base text-black">25/26 <span className="material-symbols-sharp">trophy</span> Super Bowl pick</label>
                     {selectedTeam && (
                         <div
                             className="w-full flex flex-col items-center justify-center"
@@ -368,14 +368,14 @@ export function Settings() {
                             <option key={team} value={team}>{team}</option>
                         ))}
                     </select>
-                    {isSaving && <span className="text-sm text-neutral-500">Saving...</span>}
+                    {isSaving && <span className="text-sm text-black">Saving...</span>}
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-[1px] bg-neutral-200" />
+                <div className="w-full h-[1.5px] bg-black" />
 
                 <div className="flex flex-col gap-2 justify-center items-center max-w-xl md:mx-auto mx-4 w-full px-4">
-                    <label className="flex flex-row items-center gap-1 uppercase text-base text-neutral-500">Time <span className="material-symbols-sharp">language</span> Zone</label>
+                    <label className="flex flex-row items-center gap-1 uppercase text-base text-black">Time <span className="material-symbols-sharp">language</span> Zone</label>
                     <select
                         value={timeZone}
                         onChange={(e) => setTimeZone(e.target.value)}
@@ -391,7 +391,7 @@ export function Settings() {
                 </div>
 
                 {/* Divider */}
-                {/* <div className="w-full h-[1px] bg-neutral-200" /> */}
+                {/* <div className="w-full h-[1.5px] bg-black" /> */}
 
                 {/* <div className="flex items-center gap-2">
                     <input
@@ -405,7 +405,7 @@ export function Settings() {
                 </div> */}
 
                 {/* Divider */}
-                <div className="w-full h-[1px] bg-neutral-200" />
+                <div className="w-full h-[1.5px] bg-black" />
 
                 {/* Save Button - only show if there are unsaved changes */}
                 <div className="group flex flex-col gap-8 items-center justify-center sticky bottom-0 z-50">
@@ -475,7 +475,7 @@ export function Settings() {
 
                 {/* <div className="flex items-center gap-4 my-4">
                     <div className="flex-1 h-px bg-neutral-200"></div>
-                    <span className="text-neutral-500">or</span>
+                    <span className="text-black">or</span>
                     <div className="flex-1 h-px bg-neutral-200"></div>
                 </div> */}
 

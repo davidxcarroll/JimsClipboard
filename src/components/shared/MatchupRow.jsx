@@ -1,6 +1,5 @@
 import React from 'react';
 import { getDisplayName, getEspnAbbreviation } from '../../utils/teamMapping';
-
 import { CircleCheck01 } from '../circles/circleCheck01'
 import { CircleCheck02 } from '../circles/circleCheck02'
 import { CircleCheck03 } from '../circles/circleCheck03'
@@ -19,109 +18,91 @@ export const MatchupRow = React.memo(function MatchupRow({
   picks,
   users
 }) {
-  // Mock logic only runs if enabled
   const MOCK_WINNER = ENABLE_MOCKS && gameId === '401671834' ? 'Browns' : undefined;
   const winningTeam = MOCK_WINNER || actualWinningTeam;
 
-  // Consolidate logging into debug function
   const debug = (message, data) => {
     if (process.env.NODE_ENV === 'development') {
       console.debug(`🎯 ${message}`, data);
     }
   };
 
-  const checkPick = (team, participant) => {
-    const espnAbbrev = getEspnAbbreviation(team);
-    debug('Checking pick', { gameId, team, participant, espnAbbrev, picks });
-    return picks?.[participant]?.team === espnAbbrev;
+  const didPickTeam = (team, participantId) => {
+    if (!picks || !picks[participantId]) return false;
+    const teamAbbrev = getEspnAbbreviation(team); // team is display name (e.g. "Commanders")
+    const userPick = picks[participantId].team;    // userPick is ESPN abbrev (e.g. "WSH")
+    console.log(`didPickTeam check for ${team}:`, {
+      displayName: team,
+      abbrev: teamAbbrev,    
+      userPick,
+      matches: userPick === teamAbbrev
+    });
+    return userPick === teamAbbrev;
   };
 
-  // Helper to check if participant picked this team
-  const didPickTeam = (team, participant) => {
-    const espnAbbrev = getEspnAbbreviation(team);
-    const hasPick = picks?.[participant] === espnAbbrev;
+  const isCorrectPick = (team, participantId) => {
+    if (!winningTeam || !picks?.[participantId]?.team) return false;
+    const pickedTeamAbbrev = picks[participantId].team;
+    const result = pickedTeamAbbrev === getEspnAbbreviation(team) && winningTeam === getDisplayName(team);
+    console.log(`isCorrectPick - team: ${team}, participant: ${participantId}`, {
+      pickedTeamAbbrev,
+      winningTeam,
+      displayName: getDisplayName(team),
+      result
+    });
+    return result;
+  };
 
-    // console.log('🎯 Checking pick in MatchupRow:', {
-    //   gameId,
-    //   team,
-    //   participant,
-    //   espnAbbrev,
-    //   picks,
-    //   participantPick: picks?.[participant],
-    //   hasPick
-    // });
-
-    return hasPick;
-  }
-
-  // Helper to check if pick was correct
-  const isCorrectPick = (team, participant) => {
-    return winningTeam && didPickTeam(team, participant)
-  }
-
-  // console.log('🏆 MatchupRow props:', {
-  //   gameId,
-  //   homeTeam,
-  //   awayTeam,
-  //   week,
-  //   winningTeam,
-  //   actualWinningTeam,
-  //   picks
-  // });
-
-  // Helper to get random circle check component
   const getRandomCircleCheck = () => {
-    const circles = [CircleCheck01, CircleCheck02, CircleCheck03]
-    const randomIndex = Math.floor(Math.random() * circles.length)
-    return circles[randomIndex]
-  }
+    const circles = [CircleCheck01, CircleCheck02, CircleCheck03];
+    return circles[Math.floor(Math.random() * circles.length)];
+  };
 
-  // Helper to determine team name length and get appropriate circle
   const getTeamCircle = (teamName) => {
-    if (teamName.length <= 5) return CircleTeamSm
-    if (teamName.length <= 9) return CircleTeamMd
-    return CircleTeamLg
-  }
+    if (teamName.length <= 5) return CircleTeamSm;
+    if (teamName.length <= 9) return CircleTeamMd;
+    return CircleTeamLg;
+  };
 
   const renderTeamName = (team, isWinner) => {
     const displayName = getDisplayName(team);
     const TeamCircle = getTeamCircle(displayName);
-    
+
     return (
       <span className="relative inline-block">
         {isWinner && week === 18 && <TeamCircle />}
         {displayName}
       </span>
-    )
-  }
+    );
+  };
 
-  const renderCheckmark = (team, participant) => {
-    if (week === 3) return null
-
-    const picked = didPickTeam(team, participant)
-    if (!picked) return null
-
-    const isCorrect = isCorrectPick(team, participant)
-    const showCircle = isCorrect && week === 18 && team === winningTeam
-
-    if (showCircle) {
-      const CircleCheck = getRandomCircleCheck()
-      return (
-        <div className="relative">
-          <CircleCheck />
-          ✔
-        </div>
-      )
-    }
-
+  const renderCheckmark = (team, participantId) => {
+    console.log(`Rendering checkmark for ${team}:`, {
+      team,
+      week,
+      picks,
+      participantId,
+      winningTeam,
+      hasTeamPick: picks?.[participantId]?.team
+    });
+  
+    const picked = didPickTeam(team, participantId);
+    console.log('Did pick team result:', picked);
+  
+    if (!picked) return null;
+  
+    const isCorrect = isCorrectPick(team, participantId);
+    console.log('Is correct pick result:', isCorrect);
+    
+    const showCircle = isCorrect && week === 18 && team === winningTeam;
+  
     return (
       <div className="relative">
+        {showCircle && <CircleCheck />}
         ✔
       </div>
-    )
-  }
-
-  // console.log('MatchupRow render:', { gameId, homeTeam, awayTeam, week, winningTeam, picks, users });
+    );
+  };
 
   return (
     <div className="flex flex-col jim-casual lg:text-5xl md:text-4xl text-3xl">
@@ -131,9 +112,9 @@ export const MatchupRow = React.memo(function MatchupRow({
           <div className="md:px-8 px-2">{renderTeamName(homeTeam, winningTeam === homeTeam)}</div>
         </div>
 
-        {users.map((user, index) => (
+        {users.map((user) => (
           <React.Fragment key={user.id}>
-            <div className="w-[1.5px] bg-neutral-200" />
+            <div className="w-[1.5px] bg-black" />
             <div className="flex-1 h-auto min-w-[30px] flex items-center justify-center">
               {renderCheckmark(homeTeam, user.id)}
             </div>
@@ -142,7 +123,7 @@ export const MatchupRow = React.memo(function MatchupRow({
       </div>
 
       {/* Divider */}
-      <div className="w-full h-[1px] bg-neutral-200" />
+      <div className="w-full h-[1.5px] bg-black" />
 
       {/* Away Team Row */}
       <div className="flex flex-row">
@@ -150,9 +131,9 @@ export const MatchupRow = React.memo(function MatchupRow({
           <div className="md:px-8 px-2">{renderTeamName(awayTeam, winningTeam === awayTeam)}</div>
         </div>
 
-        {users.map((user, index) => (
+        {users.map((user) => (
           <React.Fragment key={user.id}>
-            <div className="w-[1.5px] bg-neutral-200" />
+            <div className="w-[1.5px] bg-black" />
             <div className="flex-1 h-auto min-w-[30px] flex items-center justify-center">
               {renderCheckmark(awayTeam, user.id)}
             </div>
