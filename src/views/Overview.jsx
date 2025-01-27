@@ -53,6 +53,7 @@ export function Overview() {
                     { number: 1, seasonType: 3, type: 1, label: "Wild Card" },
                     { number: 2, seasonType: 3, type: 2, label: "Divisional" },
                     { number: 3, seasonType: 3, type: 3, label: "Conference" },
+                    { number: 4, seasonType: 3, type: 4, label: "Pro Bowl" },
                     { number: 5, seasonType: 3, type: 5, label: "Super Bowl" }
                 );
 
@@ -177,35 +178,40 @@ export function Overview() {
     }, [location.state?.refreshData])
 
     const getUserPicks = (user, weekNumber) => {
-        if (weekNumber <= 18) {
-          return user.seasons?.[2024]?.regular_season?.[weekNumber];
-        }
-        const round = weekNumber === 19 ? 'wildcard' : 
-                      weekNumber === 20 ? 'divisional' : 'conference';
-        return user.seasons?.[2024]?.playoffs?.[round];
-      };
-      
-      const processGamesWithPicks = (games) => {
+        const picks = weekNumber <= 18 
+          ? user.seasons?.[2024]?.regular_season?.[weekNumber]
+          : user.seasons?.[2024]?.playoffs?.[weekNumber === 19 ? 'wildcard' : weekNumber === 20 ? 'divisional' : 'conference'];
+        
+        console.log('Getting picks for user:', {
+          userId: user.id,
+          weekNumber,
+          picks
+        });
+        
+        return picks;
+    };
+
+    const processGamesWithPicks = (games) => {
         if (!users || !currentWeek?.number) return games;
         return games.map((game) => {
-          const picks = {};
-          users.forEach((user) => {
-            const userPicks = getUserPicks(user, currentWeek.number);
-            const pick = userPicks?.[game.id];
-            if (pick) {
-              picks[user.id] = { team: pick }; // Storing ESPN abbreviation
-              console.log(`User ${user.id} pick for game ${game.id}:`, {
-                pick,
-                homeTeam: game.homeTeam,
-                homeAbbrev: getEspnAbbreviation(game.homeTeam),
-                awayTeam: game.awayTeam,
-                awayAbbrev: getEspnAbbreviation(game.awayTeam)
-              });
-            }
-          });
-          return { ...game, picks };
+            const picks = {};
+            users.forEach((user) => {
+                const userPicks = getUserPicks(user, currentWeek.number);
+                const pick = userPicks?.[game.id];
+                if (pick) {
+                    picks[user.id] = { team: pick }; // Storing ESPN abbreviation
+                    console.log(`User ${user.id} pick for game ${game.id}:`, {
+                        pick,
+                        homeTeam: game.homeTeam,
+                        homeAbbrev: getEspnAbbreviation(game.homeTeam),
+                        awayTeam: game.awayTeam,
+                        awayAbbrev: getEspnAbbreviation(game.awayTeam)
+                    });
+                }
+            });
+            return { ...game, picks };
         });
-      };
+    };
 
     useEffect(() => {
         const loadData = async () => {
@@ -288,17 +294,17 @@ export function Overview() {
 
             <div className="flex flex-row items-center xl:justify-between sm:justify-center justify-evenly xs:gap-4 lg:mx-8 mx-2">
 
-            <NavLink
-    to="/picks"
-    state={{ 
-        week: {
-            number: currentWeek.number,
-            seasonType: currentWeek.seasonType,
-            type: currentWeek.type,
-            label: currentWeek.label
-        }
-    }}
-    className="
+                <NavLink
+                    to="/picks"
+                    state={{
+                        week: {
+                            number: currentWeek.number,
+                            seasonType: currentWeek.seasonType,
+                            type: currentWeek.type,
+                            label: currentWeek.label
+                        }
+                    }}
+                    className="
     group z-20
     flex flex-row items-center justify-center gap-1
     lg:py-2 py-2 lg:pl-4 pl-2 lg:pr-6 pr-4
@@ -306,9 +312,9 @@ export function Overview() {
     bg-amber-300 hover:bg-yellow-300
     lg:text-xl md:text-lg text-base
     ">
-    <span className="material-symbols-sharp">checklist</span>
-    Make Your Picks
-</NavLink>
+                    <span className="material-symbols-sharp">checklist</span>
+                    Make Your Picks
+                </NavLink>
 
                 <NavLink
                     to="/settings"
@@ -392,7 +398,7 @@ export function Overview() {
             <div className="flex flex-col chakra uppercase lg:text-xl md:text-lg text-base">
                 <div className="flex flex-row">
                     {/* Total games column */}
-                    <div className="flex-1 h-auto min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
+                    <div className="flex-1 h-12 min-w-[150px] flex items-center justify-start py-2 bg-gradient-to-r from-neutral-100 from-80% to-neutral-100/0 sticky left-0 z-10">
                         <div className="md:px-8 px-2">
                             Total of {weekData?.length || 0}
                         </div>

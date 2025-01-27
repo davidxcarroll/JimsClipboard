@@ -4,7 +4,17 @@ import { toast } from 'react-hot-toast'
 import { scheduleService } from '../services/espn/schedule'
 import { formatGameDate, formatGameTime, isPSTDateInFuture } from '../utils/dateUtils'
 import { useTeam } from '../hooks/useTeam'
-import { ESPN_TEAM_ABBREVIATIONS, getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
+import { getDisplayName, getEspnAbbreviation } from '../utils/teamMapping'
+import { Check01 } from '../components/checks/check01'
+import { Check02 } from '../components/checks/check02'
+import { Check03 } from '../components/checks/check03'
+import { Check04 } from '../components/checks/check04'
+import { Check05 } from '../components/checks/check05'
+import { Check06 } from '../components/checks/check06'
+import { Check07 } from '../components/checks/check07'
+
+// Define checks array at module level
+const checks = [Check01, Check02, Check03, Check04, Check05, Check06, Check07];
 
 export function YourPicks() {
     const location = useLocation()
@@ -28,17 +38,17 @@ export function YourPicks() {
 
     useEffect(() => {
         if (team && currentWeek?.number) {
-          const savedPicks = team.seasons?.[2024]?.regular_season?.[currentWeek.number] || {};
-          setPicks(savedPicks);
-          setIsLoading(false);
+            const savedPicks = team.seasons?.[2024]?.regular_season?.[currentWeek.number] || {};
+            setPicks(savedPicks);
+            setIsLoading(false);
         }
-      }, [team, currentWeek?.number]);
+    }, [team, currentWeek?.number]);
 
     const loadCurrentWeek = async () => {
         try {
             // Check if week was passed through navigation state
             const passedWeek = location.state?.week;
-            
+
             let week;
             if (passedWeek) {
                 // Use the passed week
@@ -49,7 +59,7 @@ export function YourPicks() {
                 week = await scheduleService.getCurrentWeek();
                 setCurrentWeek(week);
             }
-    
+
             const games = await scheduleService.getWeekGames(week.number, week.type)
 
             // Convert team abbreviations to full names using getDisplayName
@@ -97,41 +107,31 @@ export function YourPicks() {
 
     const handleSave = async () => {
         if (!team || !currentWeek?.number) {
-          toast.error('Unable to save picks at this time');
-          return;
+            toast.error('Unable to save picks at this time');
+            return;
         }
-      
-        try {
-          const updatedUser = {
-            ...team,
-            seasons: {
-              ...team.seasons,
-              2024: {
-                ...team.seasons?.[2024],
-                regular_season: {
-                  ...team.seasons?.[2024]?.regular_season,
-                  [currentWeek.number]: picks
-                }
-              }
-            }
-          };
-          await updateTeam(updatedUser);
-          toast.success('Picks saved!');
-          navigate('/', { state: { refreshData: true, timestamp: Date.now() } });
-        } catch (error) {
-          console.error('Error saving picks:', error);
-          toast.error('Could not save picks');
-        }
-      };
 
-    useEffect(() => {
-        console.log('Current state:', {
-            picks,
-            currentWeek,
-            teamPicks: team?.picks,
-            hasChanges
-        });
-    }, [picks, currentWeek, team?.picks, hasChanges]);
+        try {
+            const updatedUser = {
+                ...team,
+                seasons: {
+                    ...team.seasons,
+                    2024: {
+                        ...team.seasons?.[2024],
+                        regular_season: {
+                            ...team.seasons?.[2024]?.regular_season,
+                            [currentWeek.number]: picks
+                        }
+                    }
+                }
+            };
+            await updateTeam(updatedUser);
+            toast.success('Picks saved!');
+            navigate('/', { state: { refreshData: true, timestamp: Date.now() } });
+        } catch (error) {
+            toast.error('Could not save picks');
+        }
+    };
 
     if (isLoading) {
         return <div className="w-fit chakra mx-auto mt-48 px-2 text-2xl text-white bg-black">Loading...</div>;
@@ -146,15 +146,17 @@ export function YourPicks() {
                     </div>
 
                     <div className="
-                        flex items-center justify-center
-                        chakra uppercase
-                        lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl
-                    ">
+    flex items-center justify-center
+    chakra uppercase
+    lg:text-5xl md:text-4xl sm:text-3xl xs:text-2xl text-xl
+">
                         {currentWeek?.type === 1 ? "Wild Card" :
-                        currentWeek?.type === 2 ? "Divisional" :
-                        currentWeek?.type === 3 ? "Conference" :
-                        currentWeek?.type === 4 ? "Super Bowl" :
-                        `Week ${currentWeek?.number}`} Picks
+                            currentWeek?.type === 2 ? "Divisional" :
+                                currentWeek?.type === 3 ? "Conference" :
+                                    currentWeek?.type === 4 ? "Pro Bowl" :
+                                        currentWeek?.type === 5 ? "Super Bowl" :
+                                            `Week ${currentWeek?.number}`}
+                        {(currentWeek?.type === 4 || currentWeek?.type === 5) ? " Pick" : " Picks"}
                     </div>
 
                     {weekData && weekData.map((timeGroup, groupIndex) => (
@@ -168,7 +170,9 @@ export function YourPicks() {
                             {/* Games */}
                             {timeGroup.games.map((game, gameIndex) => {
                                 const selectedTeam = picks[game.id] ? getDisplayName(picks[game.id]) : null;
-                                const gameStarted = !isPSTDateInFuture(game.date)
+                                const gameStarted = !isPSTDateInFuture(game.date);
+                                // Use deterministic check component selection
+                                const RandomCheck = checks[gameIndex % checks.length];
 
                                 return (
                                     <div key={gameIndex} className="relative flex flex-row items-stretch justify-center">
@@ -179,10 +183,10 @@ export function YourPicks() {
                                                 w-1/2 flex items-center justify-center p-8 jim-casual text-center 
                                                 lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                                                 ${gameStarted ? 'cursor-not-allowed' : 'cursor-pointer'}
-                                                ${selectedTeam === game.homeTeam ? '' : 'text-black'}
+                                                ${selectedTeam === game.homeTeam ? '' : 'opacity-50'}
                                             `}
                                         >
-                                            {game.homeTeam} {selectedTeam === game.homeTeam && '✔'}
+                                            {game.homeTeam} {selectedTeam === game.homeTeam && <RandomCheck className="h-[.6em] w-fit ml-8" />}
                                         </div>
 
                                         {/* @ Symbol */}
@@ -197,10 +201,10 @@ export function YourPicks() {
                                                 w-1/2 flex items-center justify-center p-8 jim-casual text-center 
                                                 lg:text-8xl md:text-6xl sm:text-5xl xs:text-4xl text-3xl
                                                 ${gameStarted ? 'cursor-not-allowed' : 'cursor-pointer'}
-                                                ${selectedTeam === game.awayTeam ? '' : 'text-black'}
+                                                ${selectedTeam === game.awayTeam ? '' : 'opacity-50'}
                                             `}
                                         >
-                                            {game.awayTeam} {selectedTeam === game.awayTeam && '✔'}
+                                            {game.awayTeam} {selectedTeam === game.awayTeam && <RandomCheck className="h-[.6em] w-fit ml-8" />}
                                         </div>
                                     </div>
                                 )
@@ -217,7 +221,7 @@ export function YourPicks() {
                             Done
                         </div>
                     </div>
-                    
+
                 </div>
 
                 {/* Background Elements */}

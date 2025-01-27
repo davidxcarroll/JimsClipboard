@@ -2,16 +2,10 @@ import { espnApi } from './api';
 import { ESPN_TEAM_ABBREVIATIONS } from '../../utils/teamMapping';
 
 export class ScheduleService {
-
-  canMakePicksForWeek(games) {
-    // Check if there are any games that haven't started yet (status === 'pre')
-    return games.some(game => game.status === 'pre');
-  }
-
   constructor() {
     this.currentWeek = null;
     this.schedule = null;
-    this.processedGames = new Map(); // Cache processed games
+    this.processedGames = new Map();
   }
 
   async getCurrentWeek() {
@@ -24,6 +18,7 @@ export class ScheduleService {
       const now = new Date();
       const calendar = response.leagues[0].calendar;
       
+      // Find the current period (regular season or postseason)
       let currentPeriod = null;
       for (const period of calendar) {
         const startDate = new Date(period.startDate);
@@ -41,64 +36,62 @@ export class ScheduleService {
       }
   
       if (currentPeriod.label === 'Postseason') {
-        for (const entry of currentPeriod.entries) {
+        // Sort playoff entries by date
+        const sortedEntries = [...currentPeriod.entries].sort(
+          (a, b) => new Date(a.startDate) - new Date(b.startDate)
+        );
+
+        // Find the current or next playoff round
+        let targetEntry = null;
+        let isTransitionPeriod = false;
+
+        for (let i = 0; i < sortedEntries.length; i++) {
+          const entry = sortedEntries[i];
           const startDate = new Date(entry.startDate);
           const endDate = new Date(entry.endDate);
+          const nextEntry = sortedEntries[i + 1];
           
           if (now >= startDate && now <= endDate) {
-            let weekType;
-            let normalizedLabel = entry.label;
-
-            switch(entry.label) {
-              case 'Wild Card':
-              case 'Wild Card Round': 
-                weekType = 1; 
-                normalizedLabel = 'Wild Card';
-                break;
-              case 'Divisional':
-              case 'Divisional Round': 
-                weekType = 2; 
-                normalizedLabel = 'Divisional';
-                break;
-              case 'Conference':
-              case 'Conference Championship': 
-                weekType = 3; 
-                normalizedLabel = 'Conference';
-                break;
-              case 'Pro Bowl': 
-                weekType = 4; 
-                normalizedLabel = 'Pro Bowl';
-                break;
-              case 'Super Bowl': 
-                weekType = 5; 
-                normalizedLabel = 'Super Bowl';
-                break;
-              default: 
-                weekType = null;
+            // We're in this round - check if games are complete
+            const games = await this.getWeekGames(parseInt(entry.value), this.getWeekType(entry.label));
+            const allGamesComplete = games.every(game => game.status === 'post');
+            
+            if (allGamesComplete && nextEntry) {
+              // If all games are done and there's a next round, show the next round
+              targetEntry = nextEntry;
+              isTransitionPeriod = true;
+            } else {
+              // If games aren't done or there's no next round, show current round
+              targetEntry = entry;
             }
-  
-            if (import.meta.env.DEV) {
-              console.debug('📅 Current Week from Calendar:', {
-                label: normalizedLabel,
-                weekType,
-                startDate,
-                endDate,
-                now
-              });
-            }
-  
-            return {
-              number: parseInt(entry.value),
-              type: weekType,
-              seasonType: 3, // Postseason
-              label: normalizedLabel,
-              startDate,
-              endDate
-            };
+            break;
+          } else if (now < startDate) {
+            // If we're before this round's start, this is the next upcoming round
+            targetEntry = entry;
+            isTransitionPeriod = true;
+            break;
           }
+        }
+
+        // If we didn't find a target entry, use the last playoff round
+        if (!targetEntry && sortedEntries.length > 0) {
+          targetEntry = sortedEntries[sortedEntries.length - 1];
+        }
+
+        if (targetEntry) {
+          return {
+            number: parseInt(targetEntry.value),
+            type: this.getWeekType(targetEntry.label),
+            seasonType: 3, // Postseason
+            label: this.normalizeLabel(targetEntry.label),
+            startDate: new Date(targetEntry.startDate),
+            endDate: new Date(targetEntry.endDate),
+            isTransitionPeriod
+          };
         }
       }
   
+      // Regular season logic remains the same
       return {
         number: parseInt(currentPeriod.value),
         type: null,
@@ -111,6 +104,39 @@ export class ScheduleService {
     } catch (error) {
       console.error('Error getting current week:', error);
       return null;
+    }
+  }
+
+  getWeekType(label) {
+    switch(label) {
+      case 'Wild Card':
+      case 'Wild Card Round': 
+        return 1;
+      case 'Divisional':
+      case 'Divisional Round': 
+        return 2;
+      case 'Conference':
+      case 'Conference Championship': 
+        return 3;
+      case 'Pro Bowl': 
+        return 4;
+      case 'Super Bowl': 
+        return 5;
+      default: 
+        return null;
+    }
+  }
+
+  normalizeLabel(label) {
+    switch(label) {
+      case 'Wild Card Round': 
+        return 'Wild Card';
+      case 'Divisional Round': 
+        return 'Divisional';
+      case 'Conference Championship': 
+        return 'Conference';
+      default: 
+        return label;
     }
   }
 
